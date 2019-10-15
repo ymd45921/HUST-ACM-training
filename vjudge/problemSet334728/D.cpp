@@ -24,7 +24,7 @@ int main()
     memset(select,0,sizeof(select));
     for(int i=0;i<4;++i)
     {
-        printf("%s",question[i]);
+        printf("%s\n",question[i]);
         fflush(stdout);
         scanf("%d",&in[i]);
         res = found(in[i]);
@@ -52,6 +52,7 @@ int main()
 
     printf("!");
     for(int i=0;i<6;++i)printf(" %d",out[i]);
+    printf("\n");
     fflush(stdout);
 
     return 0;
