@@ -1,5 +1,4 @@
 #include <iostream>
-#define mylogx
 
 using namespace std;
 typedef long long longs;
@@ -9,8 +8,6 @@ int son[55];
 int num[55];
 int _length;
 
-bool treed = false;
-int last_treed;
 int tmp,cur;
 longs l_pref=0,r_pref=0;
 int tl,tr;
@@ -37,13 +34,7 @@ int main()
     _length = cur - 1;
     tmp = 1; num[--cur] = tmp-1;
     while(cur>0) num[--cur] = (tmp<<=1)-1;
-#ifdef mylog
-    cout<<"son[] : ";
-    for(int i = 0;i<=_length;++i)cout<<son[i]<<' ';
-    cout<<"\nnum[] : ";
-    for(int i = 0;i<=_length;++i)cout<<num[i]<<' ';
-    cout<<endl;
-#endif
+
     tl=l;tr=r;
     while (tl)
     {
@@ -53,7 +44,8 @@ int main()
         if(tl>0)
         {
             --tl;
-            _lbound = l_pref+=(son[_findPosition]&1);
+            _lbound = (son[_findPosition-1]&1);
+            l_pref += _lbound;
         }
     }
     while (tr)
@@ -63,7 +55,7 @@ int main()
         if(tr>0)
         {
             --tr;
-            r_pref+=(son[_findPosition]&1);
+            r_pref += (son[_findPosition-1]&1);
         }
     }
     cout<<r_pref-l_pref+_lbound;
