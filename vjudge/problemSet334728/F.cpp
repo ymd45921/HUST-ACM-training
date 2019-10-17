@@ -3,19 +3,36 @@
 #include <iomanip>
 #include <functional>
 
+#define min(x,y) x<y?x:y
+
 using namespace std;
 typedef long long longs;
-typedef long double doubles;
 
 int n,k,m;
 int a[100005];
 longs sum[100005] = {0};
-doubles ans;
+double ans;
 
-doubles getAnswer(int i)
+//你写的getAnswer有问题
+// double getAnswer(int i)
+// {
+//     int deleted = n-i;
+//     int added = k*i<m-deleted?k*i:m-deleted;
+//     return ((double)sum[i]+(double)added)/(double)i;
+// }
+
+//用它的getAnswer就过了。
+// double getAnswer(int cnt)
+// {
+// 	int deleted=n-cnt;
+// 	double maxn=min((longs)m-deleted,(longs)cnt*k);
+// 	return (maxn+sum[cnt])/cnt;
+// }
+
+double getAnswer(int i)
 {
     int deleted = n-i;
-    int added = k*i<m-deleted?k*i:m-deleted;
+    longs added = min((longs)k*i,(longs)m-deleted);
     return ((double)sum[i]+(double)added)/(double)i;
 }
 
@@ -32,7 +49,7 @@ int main()
 
     int lbound = 1>(n-m)?1:(n-m);
     int rbound = n;
-    doubles ans1,ans2;
+    double ans1,ans2;
     int cp1,cp2,dev;
     while(lbound<=rbound)
     {
@@ -41,7 +58,7 @@ int main()
         cp2 = rbound-dev;
         ans1 = getAnswer(cp1);
         ans2 = getAnswer(cp2);
-        if(ans1>ans2)
+        if(ans1>=ans2)
         {
             ans = ans1;
             rbound = cp2-1;
