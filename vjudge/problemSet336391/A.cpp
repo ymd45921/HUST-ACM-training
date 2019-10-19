@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cstring>
+#define MEMSET0(x) memset(x,0,sizeof(x))
 
 using namespace std;
 
 int N,n;
 int theQue[5005];
 int theNext[5005];
+int ans[50050][3];
 
 inline void cut2(int& length)
 {
@@ -14,7 +16,7 @@ inline void cut2(int& length)
     for(int i=0;i<lim;++i)
     {
         cur = theNext[cur] = theNext[theNext[cur]];
-        if(--length==3)return;
+        --length;
     }
 }
 
@@ -26,7 +28,7 @@ inline void cut3(int& length)
     {
         cur = theNext[cur];
         cur = theNext[cur] = theNext[theNext[cur]];
-        if(--length==3)return;
+        --length;
     }
 }
 
@@ -35,30 +37,35 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     theNext[0]=0;
+    MEMSET0(ans);
 
     cin>>N;
     for(int i=0;i<N;++i)
     {
         cin>>n;
+        MEMSET0(theNext);
+        MEMSET0(theQue);
         if(n<=3)
         {
+            int cur = 0;
             int x = 1;
             while(x<=n)
             {
-                cout<<x<<' ';
-                x++;
+                ans[i][cur]=x;
+                ++cur;
+                ++x;
             }
-            cout<<endl;
         }
         else if(n-(n>>1)<=3)
         {
             int x = 1;
+            int cur = 0;
             while(x<=n)
             {
-                cout<<x<<' ';
+                ans[i][cur] = x;
+                ++cur;
                 x+=2;
             }
-            cout<<endl;
         }
         else
         {
@@ -79,9 +86,24 @@ int main()
                 else cut2(length);
                 flag^=1;
             }
-            cout<<theQue[1]<<' '<<theQue[theNext[1]]<<' '<<theQue[theNext[theNext[1]]]<<endl;
+            ans[i][0] = theQue[1];
+            ans[i][1] = theQue[theNext[1]];
+            ans[i][2] = theQue[theNext[theNext[1]]];
         }
     }
+
+    int lim = N-1;
+    for(int i=0;i<lim;++i)
+    {
+        cout<<ans[i][0];
+        if(ans[i][1])cout<<' '<<ans[i][1];
+        if(ans[i][2])cout<<' '<<ans[i][2];
+        cout<<endl;
+    }
+    cout<<ans[lim][0];
+    if(ans[lim][1])cout<<' '<<ans[lim][1];
+    if(ans[lim][2])cout<<' '<<ans[lim][2];
+    cout<<endl;
 
     return 0;
 }
