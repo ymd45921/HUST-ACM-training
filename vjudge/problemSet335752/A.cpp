@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #define max(a,b) a>b?a:b
+#define min(a,b) a<b?a:b
 
 using namespace std;
 
@@ -20,8 +21,23 @@ int main()
 
     int cur = 0, last = 0;
     int tail = 0;
-    for(int i=0;i<)
-    
-
+    for(int i=0;i<T;++i)
+    {
+        last = tail;
+        cur = tail + 1;
+        for(;cur>last;--cur)tail = max(tail,step[cur]);
+        tail = min(tail,T);
+        if(tail==last)
+        {
+            ans = -1;
+            break;
+        }
+        else
+        {
+            ++ans;
+            if(tail==T)break;
+        }
+    }
+    printf("%d",ans);
     return 0;
 }

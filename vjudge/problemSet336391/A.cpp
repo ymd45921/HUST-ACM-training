@@ -1,13 +1,3 @@
-# HUST-ACM 2019新生B class训练题
-
-专题：数据结构基础 日期：2019-10-19
-
-## Problem A
-
-为什么我总是感觉这个题目有约瑟夫环式的递推公式？
-
-**Version 1** : 没有正确性的瞎jb优化
-```c++
 #include <iostream>
 #include <cstring>
 
@@ -95,5 +85,3 @@ int main()
 
     return 0;
 }
-```
-错误分析：应该是数组指针没指对地方==改了一下，这个版本应该不至于WA了吧。不对，还是WA了==
