@@ -3,7 +3,6 @@
 #define max(a,b) a>b?a:b
 
 using namespace std;
-struct cow{int s;int e;};
 
 int N,T,ans = 0;
 int tindex,tend;
@@ -21,6 +20,7 @@ int main()
 
     int cur = 0, last = 0;
     int tail = 0;
+    for(int i=0;i<)
     
 
     return 0;
