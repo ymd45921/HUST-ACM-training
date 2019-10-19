@@ -1,64 +1,3 @@
-# HUST-ACM 2019基本算法专项练习
-
-专题：贪心 日期：2019-10-17
-
-## Problem A
-
-**Version 1** : 编译器找不到`nullptr`标识，编译失败。然后还WA了。
-```c++
-#include <iostream>
-#include <algorithm>
-#define max(a,b) a>b?a:b
-
-using namespace std;
-struct cow{int s;int e;};
-
-int N,T,ans = 0;
-cow cows[25050];
-
-bool cmp(const cow& c1,const cow& c2)
-{
-    if(c1.s==c2.s)return c1.e>c2.e;
-    else return c1.s<c2.s;
-}
-
-int main()
-{
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    cin>>N>>T;
-    for(int i=0;i<N;++i)cin>>cows[i].s>>cows[i].e;
-    sort(cows,cows+N,cmp);
-    int cur = 0;
-    int tail = 0,maxtail,lim;
-    for(cur=0;cur<N;++cur)
-    {
-        lim = tail+1;
-        maxtail = tail;
-        while(cows[cur].s<=lim)
-        {
-            maxtail = max(maxtail,cows[cur].e);
-            ++cur;
-        }
-        if(maxtail>tail)
-        {
-            tail = cows[cur].e;
-            ++ans;
-        }
-        else cur==N;
-    }
-    if(cur==N&&tail!=T)cout<<-1;
-    else cout<<ans;
-    return 0;
-}
-```
-解决方案：使用纯C.重写。  
-WA问题所在：一堆毛病==提交前请先测试
-
-**Version 2** : TLE.
-解决方案：跳过同样的值。搞个树存一下索引？
-```c++
 #include <cstdio>
 #include <algorithm>
 #define max(a,b) a>b?a:b
@@ -109,4 +48,3 @@ int main()
     else printf("%d",ans);
     return 0;
 }
-```
