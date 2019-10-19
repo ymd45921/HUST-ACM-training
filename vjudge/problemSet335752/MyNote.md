@@ -57,10 +57,11 @@ int main()
 WA问题所在：一堆毛病==提交前请先测试
 
 **Version 2** : TLE.
-解决方案：跳过同样的值。搞个树存一下索引？
+解决方案：跳过同样的s值。搞个树存一下索引？用数组存一下步长还是会TLE。
 ```c++
 #include <cstdio>
 #include <algorithm>
+#include <cstring>
 #define max(a,b) a>b?a:b
 #define mylogx
 
@@ -69,6 +70,7 @@ struct cow{int s;int e;};
 
 int N,T,ans = 0;
 cow cows[25050];
+int step[1000050];
 
 bool cmp(const cow& c1,const cow& c2)   // 保证每个s的第一项必然可以使队列延伸最长
 {
@@ -79,7 +81,12 @@ bool cmp(const cow& c1,const cow& c2)   // 保证每个s的第一项必然可以
 int main()
 {
     scanf("%d%d",&N,&T);
-    for(int i=0;i<N;++i)scanf("%d%d",&cows[i].s,&cows[i].e);
+    memset(step,0,sizeof(step));
+    for(int i=0;i<N;++i)
+    {
+        scanf("%d%d",&cows[i].s,&cows[i].e);
+        ++step[cows[i].s];
+    }
     sort(cows,cows+N,cmp);
     cows[N] = {25050,50100};
 #ifdef mylog
@@ -95,7 +102,7 @@ int main()
         while(cows[cur].s<=lim)
         {
             maxtail = max(maxtail,cows[cur].e);
-            ++cur;
+            cur+=step[cows[cur].s];
         }
         if(maxtail>tail)                // 队列可以在连续的情况下延伸
         {
@@ -105,7 +112,7 @@ int main()
         }
         else cur==N;                    // 队列无法保证连续，无解了。
     }
-    if(cur==N&&tail<T)printf("-1");    //已经遍历所有可能依然没有全覆盖，告辞。
+    if(cur==N&&tail<T) printf("-1");    //已经遍历所有可能依然没有全覆盖，告辞。
     else printf("%d",ans);
     return 0;
 }
