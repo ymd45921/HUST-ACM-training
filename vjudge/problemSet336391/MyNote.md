@@ -345,6 +345,41 @@ int main()
 
 这个屌STL题目怕不是在搞我。
 
+**Version 1** : 看来你就是不给我用STL了是吧。
+```c++
+#include <iostream>
+#include <list>
+
+using namespace std;
+typedef long long longs;
+
+longs n,m;
+longs*in;
+list<longs> thelist;
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin>>n;
+    in = new longs[n];
+    for(int i=0;i<n;++i)
+    {
+        cin>>in[i];
+        thelist.push_back(in[i]);
+    }
+    cin>>m;
+    thelist.remove(m);
+    cout<<n<<endl;
+    for(int i=0;i<n;++i)cout<<in[i]<<' ';
+    cout<<endl<<thelist.size()<<endl;
+    for(auto i=thelist.begin();i!=thelist.end();++i)
+        cout<<*i<<' ';
+    return 0;
+}
+```
+那我之好手动重写了。
+
 ## Problem F
 
 **Version 1** : 不是玩素数啊
@@ -390,6 +425,9 @@ int main()
     return 0;
 }
 ```
+要不咱还是乖乖的模拟吧？
+
+妈的这个问题F到底怎么回事，怎么什么代码都过不了。
 
 ## Problem G
 
