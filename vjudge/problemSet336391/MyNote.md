@@ -380,6 +380,47 @@ int main()
 ```
 那我之好手动重写了。
 
+**Version 2** ： 非STL版本，虽然没过，但是知道这个题是一个语文题了
+```c++
+#include <iostream>
+
+using namespace std;
+typedef long long longs;
+
+longs n,m;
+longs*in;
+longs length;
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin>>n;
+    in = new longs[n];
+    for(int i=0;i<n;++i)
+    {
+        cin>>in[i];
+    }
+    cin>>m;
+    length = n;
+
+    for(int i=0;i<n;++i)
+    {
+        if(in[i]==m)--length;
+    }
+    cout<<n<<endl;
+    for(int i=0;i<n;++i)cout<<in[i]<<' ';
+    cout<<endl<<length<<endl;
+    for(int i=0;i<n;++i)
+    {
+        if(in[i]==m);
+        else cout<<in[i]<<' ';
+    }
+    return 0;
+}
+```
+这道题目标准输入会有多组数据，而且输出末尾不可以有空格
+
 ## Problem F
 
 **Version 1** : 不是玩素数啊
