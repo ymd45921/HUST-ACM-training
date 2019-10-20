@@ -20,9 +20,9 @@ int main()
     }
     cin>>m;
     thelist.remove(m);
-    cout<<n<<endl;
+    cout<<n<<endl<<endl;
     for(int i=0;i<n;++i)cout<<in[i]<<' ';
-    cout<<endl<<thelist.size()<<endl;
+    cout<<endl<<endl<<thelist.size()<<endl<<endl;
     for(auto i=thelist.begin();i!=thelist.end();++i)
         cout<<*i<<' ';
     return 0;

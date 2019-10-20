@@ -340,3 +340,61 @@ int main()
 }
 ```
 错误原因：个人建议别找错误了，重新写还来的快些。行加大答案数组之后直接WA了==
+
+## Problem E
+
+这个屌STL题目怕不是在搞我。
+
+## Problem F
+
+**Version 1** : 不是玩素数啊
+```c++
+#include <iostream>
+#include <cstring>
+#include <list>
+
+#define mylogx
+
+using namespace std;
+
+int prime[5500];
+bool desk[50000];
+int maxl = 49980;
+list<int> ans;
+int input;
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    memset(prime,0,sizeof(prime));
+    memset(desk,-1,sizeof(desk));
+    for(int i=2;i<maxl;++i)
+    {
+        if(desk[i])
+        {
+            prime[++prime[0]] = i;
+            int tmp;
+            for(int j=2;(tmp=j*i)<maxl;++j)
+            {
+                desk[tmp]=false;
+            }
+        }
+    }
+#ifdef mylog
+    for(int i=1;i<=prime[0];++i)cout<<prime[i]<<' ';
+    cout<<endl;
+#endif
+    while(cin>>input)ans.push_back(prime[input]);
+    for(auto i:ans)cout<<i<<endl;
+    return 0;
+}
+```
+
+## Problem G
+
+这个题目不能用`sstream`作为输出缓冲，会只输出一行（也许`\n`就是一个清除缓冲区的标记？）
+
+除了利用`sstream`进行Parse之外，C++也提供了一个类似Java的`to_string()`函数
+
+下次不管`else`或者`if`、`for`后是不是只有一个语句，我都要花括弧括起来==养成好习惯，这简单写法害人不浅（）`while`因为一般要改变状态，永远都不要简写！！
