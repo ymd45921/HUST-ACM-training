@@ -195,3 +195,148 @@ int main()
     return 0;
 }
 ```
+错误分析：把答案用数组存了一起输出就没问题了。
+
+## Problem B
+
+常规忘记在`while`循环里面移动游标导致死循环…………
+
+## Problem C
+
+
+## Problem D
+
+学习了`std::istream::getline()`的使用方法。以后也不用谈输入色变了。
+
+**Version 1** : RE还行。这题你写的多丑啊==
+```c++
+#include <iostream>
+#include <stack>
+#include <cstring>
+#include <iomanip>
+
+using namespace std;
+stack<double> num;
+stack<char> opr;
+char in[250];
+int length = 0;
+double ans[250];
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    double tmp = 0;
+    bool flag = false;
+
+    while(1)
+    {
+        cin.getline(in,205,'\n');
+        int len;
+        if((len=strlen(in))==1)break;
+        for(int i=0;i<len;++i)
+        {
+            if(in[i]>='0'&&in[i]<='9')
+            {
+                tmp*=10;
+                tmp+=(in[i]-'0');
+                flag = true;
+            }
+            else
+            {
+                switch(in[i])
+                {
+                    case ' ':
+                        if(flag)
+                        {
+                            flag = false;
+                            num.push(tmp);
+                            tmp = 0;
+
+                            if(!opr.empty())
+                            {
+                                switch(opr.top())
+                                {
+                                    case '*':
+                                        opr.pop();
+                                        tmp = num.top();
+                                        num.pop();
+                                        tmp*=num.top();
+                                        num.pop();
+                                        num.push(tmp);
+                                        tmp = 0;
+                                        break;
+                                    case '/':
+                                        opr.pop();
+                                        tmp = num.top();
+                                        num.pop();
+                                        tmp=num.top()/tmp;
+                                        num.pop();
+                                        num.push(tmp);
+                                        tmp = 0;
+                                        break;
+                                    default:break;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        opr.push(in[i]);
+                }
+            }
+        }
+        num.push(tmp);
+        while(!opr.empty())
+        {
+            switch(opr.top())
+            {
+                case '+':
+                    opr.pop();
+                    tmp = num.top();
+                    num.pop();
+                    tmp+=num.top();
+                    num.pop();
+                    num.push(tmp);
+                    tmp = 0;
+                    break;
+                case '-':
+                    opr.pop();
+                    tmp = num.top();
+                    num.pop();
+                    tmp=num.top()-tmp;
+                    num.pop();
+                    num.push(tmp);
+                    tmp = 0;
+                    break;
+                case '*':
+                    opr.pop();
+                    tmp = num.top();
+                    num.pop();
+                    tmp*=num.top();
+                    num.pop();
+                    num.push(tmp);
+                    tmp = 0;
+                    break;
+                case '/':
+                    opr.pop();
+                    tmp = num.top();
+                    num.pop();
+                    tmp=num.top()/tmp;
+                    num.pop();
+                    num.push(tmp);
+                    tmp = 0;
+                    break;
+                default:break;
+            }
+        }
+        ans[length++]=num.top();
+        num.pop();
+    }
+
+    cout<<fixed<<setprecision(2);
+    for(int i=0;i<length;++i)cout<<ans[i]<<endl;
+    return 0;
+}
+```
+错误原因：个人建议别找错误了，重新写还来的快些。行加大答案数组之后直接WA了==
