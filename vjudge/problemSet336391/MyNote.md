@@ -55,6 +55,9 @@
 
 **Version 4** : 为什么后缀表达式也能WA
 
+**Terminate** : 最后知道这个题是HDU的题目，查了个版本交上去了，没看出来我的哪里有问题。
+https://blog.csdn.net/Feynman1999/article/details/88383132 这个也是用后缀表达式AC的。
+就不知道怎么回事了。
 
 ## Problem E
 

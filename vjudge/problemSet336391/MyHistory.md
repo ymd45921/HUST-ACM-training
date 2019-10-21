@@ -872,6 +872,62 @@ int main()
 }
 ```
 
+**Terminate** : 抄的版本，不知道我哪里有问题
+```c++
+#include<stdio.h>
+#include<stack>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+    stack<double> s;
+    int n;
+    while(~scanf("%d",&n)) {
+        char c;
+        c = getchar();
+        if(c=='\n' && n==0) {
+            break;
+        }
+        s.push(n);
+        c = getchar();
+        double m;
+        while(~scanf("%d",&n)) {
+            if(c == '*') {
+                m = s.top();
+                m *= n;
+                s.pop();
+                s.push(m);
+            }
+            if(c == '/') {
+                m = s.top();
+                m /= n;
+                s.pop();
+                s.push(m);
+            }
+            if(c == '+') {
+                s.push(n);
+            }
+            if(c == '-') {
+                n = -n;
+                s.push(n);
+            }
+            if(c=getchar() == '\n') {
+                break;
+            }
+            c = getchar();
+            }
+            double sum = 0;
+            while(!s.empty()) {
+                sum += s.top();
+                s.pop();
+        }
+        printf("%.2lf\n",sum);
+    }
+return 0;
+} 
+```
+
 ## Problem E
 
 **Version 1** : 看来你就是不给我用STL了是吧。
