@@ -5,17 +5,17 @@
 #include <cstring>
 
 using namespace std;
-struct ele{char opr;long double num;bool type;};
+struct ele{char opr;double num;bool type;};
 
 char inString[250];
 stack<char> opr;
-stack<long double> num;
+stack<double> num;
 list<ele> suffix;
-list<long double> ans;
+list<double> ans;
 
-inline long double readNumber(int& i)
+inline double readNumber(int& i)
 {
-    long double tmp = 0;
+    double tmp = 0;
     while(inString[i]>='0'&&inString[i]<='9')
     {
         tmp *= 10;
@@ -31,7 +31,7 @@ inline bool isOpreator(char ch)
     else return true;
 }
 
-inline void pushSuffix(long double num)
+inline void pushSuffix(double num)
 {
     suffix.push_back({'\0',num,false});
 }
@@ -41,7 +41,7 @@ inline void pushSuffix(char opr)
     suffix.push_back({opr,0,true});
 }
 
-inline long double calculate(long double lhs, long double rhs, char opr)
+inline double calculate(double lhs, double rhs, char opr)
 {
     switch(opr)
     {
@@ -107,7 +107,7 @@ int main()
             opr.pop();
         }
 
-        long double lhs,rhs;
+        double lhs,rhs;
         char tmp;
         while(!suffix.empty())
         {
