@@ -21,14 +21,15 @@ int main()
 
     int cur = 0, last = 0;
     int tail = 0;
-    while(cur<=T)
+    while(1)
     {
         last = tail;
         int lim = tail+1;
-        for(;cur<=lim;++cur)tail = max(tail,step[cur]);
-        // tail = min(tail,T);
+        for(cur=last;cur<=lim;++cur)tail = max(tail,step[cur]);
+        tail = min(tail,T);
         if(tail==last)
         {
+            ans = -1;
             break;
         }
         else
@@ -37,7 +38,6 @@ int main()
             if(tail==T)break;
         }
     }
-    if(tail<T)ans = -1;
     printf("%d",ans);
     return 0;
 }
