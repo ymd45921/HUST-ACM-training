@@ -10,6 +10,12 @@
 
 using namespace std;
 
+struct digit
+{
+    int i,pos;
+    bool operator>(const digit& rhs) const;
+};
+
 int main()
 {
     // ios::sync_with_stdio(false);
@@ -32,15 +38,24 @@ int main()
         cout<<"n = "<<n<<"\\0"<<endl<<endl;
 #endif
         digitlen = n.length()-m;
-        priority_queue<int,vector<int>,greater<int>> que;
+        if(!digitlen)
+        {
+            cout<<"0"<<endl;
+            continue;
+        }
+        
+        priority_queue<digit,vector<digit>,greater<digit>> que;
+        int minpos = 0;
         for(int i=0;i<=m;++i)
-            que.push(n[i]-'0');
+            que.push({n[i]-'0',i});
         for(int i=0;i<digitlen;++i)
         {
-            ans[i] = que.top()+'0';
+            while(que.top().pos<minpos)que.pop();
+            ans[i] = que.top().i+'0';
+            minpos = que.top().pos;
             que.pop();
             if(i==digitlen-1)break;
-            que.push(n[m+i+1]-'0');
+            que.push({n[m+i+1]-'0',m+i+1});
         }
         ans[digitlen] = 0;
 
@@ -50,4 +65,9 @@ int main()
         cout<<ans+findpos<<endl;
     }
     return 0;
+}
+
+bool digit::operator>(const digit& rhs) const
+{
+    return i>rhs.i;
 }
