@@ -1,5 +1,6 @@
 /**
- *
+ * 思路没错啊（）为什么就WA了呢==
+ * 还真是巧，今天刚刚从yzy带佬那里听说RMQ这道题就是RMQ
  */
 #include <iostream>
 #include <string>
@@ -54,7 +55,7 @@ int main()
             ans[i] = que.top().i+'0';
             minpos = que.top().pos;
             que.pop();
-            if(i==digitlen-1)break;
+            // if(i==digitlen-1)break;
             que.push({n[m+i+1]-'0',m+i+1});
         }
         ans[digitlen] = 0;
@@ -69,5 +70,6 @@ int main()
 
 bool digit::operator>(const digit& rhs) const
 {
+    if(i==rhs.i) pos>rhs.pos;
     return i>rhs.i;
 }
