@@ -3,11 +3,6 @@
  * 看样子有点像要用线段树的样子（）
  *
  * 模拟了就TLE了……果然不是模拟啊==
- * 
- * 你线段树问题还挺多的嗷：
- * + 既然用了左右孩子宏，那么数组必然是从1开始的
- * + 既然是线段树，数组记得要开上限的四倍
- * + 既然是左右分别递归，各种情况排列组合，递归的边界未必就是mid
  */
 #include <iostream>
 #include <cstring>
@@ -15,8 +10,6 @@
 #define lc(x) (x<<1)
 #define rc(x) (x<<1|1)
 #define isleaf(x) (!(x.l-x.r))
-#define min(a,b) (a<b?a:b)
-#define max(a,b) (a>b?a:b)
 
 using namespace std;
 
@@ -42,7 +35,7 @@ void buildTree(int pos,int upper,int lower)
 
 inline int getAns(int index)
 {
-    int cur = 1,mid,ans = 0;
+    int cur = 0,mid,ans = 0;
     while(!isleaf(tree[cur]))
     {
         ans += tree[cur].v;
@@ -62,8 +55,8 @@ inline void color(int pos,int left,int right)
         return;
     }
     int mid = (tree[pos].l+tree[pos].r)>>1;
-    if(left<=mid)color(lc(pos),left,min(mid,right));
-    if(right>mid)color(rc(pos),max(left,(mid+1)),right);
+    if(left<=mid)color(lc(pos),left,mid);
+    if(right>mid)color(rc(pos),mid+1,right);
 }
 
 int main()
@@ -75,12 +68,12 @@ int main()
     {
         if(!n)break;
         memset(tree,0,sizeof(tree));
-        buildTree(1,1,n);
+        buildTree(0,1,n);
         N=n;
         while(n--)
         {
             cin>>a>>b;
-            color(1,a,b);
+            color(0,a,b);
         }
         cout<<getAns(1);
         for(int i=2;i<=N;++i)
