@@ -8,6 +8,12 @@
  * 对于每一组数据，我操？
  * 我仏了还有哪里搞错了吗==
  * 怎么还能MLE的？
+ * 
+ * vis数组的必要性：在递归链中，避免间隔后末端使用前端的占用
+ * 
+ * 两个错误：
+ * + 忽略递归链调用————visit数组的必要性；
+ * + 寻找增广路时，之前扫过的部分不可跳过；
  */
 #include <iostream>
 #include <cstring>
@@ -22,6 +28,7 @@ typedef int girl;
 int K,M,N;
 int a,b;
 int graph[505][505]{0};
+bool visit[505]{0};         /*必要*/
 
 girl match[550]{0};
 boy couple[550]{0};
@@ -42,14 +49,17 @@ inline void addEdge(girl a, boy b)
 
 bool nextMatch(girl x)
 {
-    for(int i=couple[x]+1;i<=N;++i)
-        if(graph[x][i])
+    for(int i=1;i<=N;++i)       /*不可跳跃*/
+        if(graph[x][i]&&!visit[i])
+        {
+            visit[i] = true;
             if(!match[i]||nextMatch(match[i]))
             {
                 couple[x] = i;
                 match[i] = x;
                 return true;
             }
+        }
     return false;
 }
 
@@ -57,7 +67,12 @@ inline int maxMatch()
 {
     int matched = 0;
     for(int i=1;i<=M;++i)
-        if(nextMatch(i))++matched;
+        if(!couple[i])
+        {
+            memset(visit,0,sizeof(visit));
+            if(nextMatch(i))
+                ++matched;
+        }
     return matched;
 }
 
