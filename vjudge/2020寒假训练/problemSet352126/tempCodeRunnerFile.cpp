@@ -1,62 +1,62 @@
 /**
- * 我日我怎么觉得这个题目是模拟啊==
- * 看样子有点像要用线段树的样子（）
+ * 二分图最大匹配
+ * König定理：最小覆盖点数=最大匹配数
  *
- * 模拟了就TLE了……果然不是模拟啊==
+ * 所以这个题目是复习匈牙利算法？
+ * 怎么就WA了呢（）
+ * 
+ * 对于每一组数据，我操？
  */
 #include <iostream>
 #include <cstring>
 
-#define lc(x) (x<<1)
-#define rc(x) (x<<1|1)
-#define isleaf(x) (!(x.l-x.r))
+#define indegree(x) (graph[0][x])
+#define outdegree(x) (graph[x][0])
 
 using namespace std;
+typedef int boy;
+typedef int girl;
 
-struct node
+int K,M,N;
+int a,b;
+int graph[505][505]{0};
+
+girl match[550]{0};
+boy couple[550]{0};
+
+inline void initialArrays()
 {
-    int l,r;
-    int v;
-};
-
-int n,a,b,N;
-node tree[400020];
-
-void buildTree(int pos,int upper,int lower)
-{
-    tree[pos] = {upper,lower,0};
-    if(upper-lower)
-    {
-        int mid = (upper+lower)>>1;
-        buildTree(lc(pos),upper,mid);
-        buildTree(rc(pos),mid+1,lower);
-    }
+    memset(graph,0,sizeof(graph));
+    memset(match,0,sizeof(match));
+    memset(couple,0,sizeof(couple));
 }
 
-inline int getAns(int index)
+inline void addEdge(girl a, boy b)
 {
-    int cur = 0,mid,ans = 0;
-    while(!isleaf(tree[cur]))
-    {
-        ans += tree[cur].v;
-        mid = (tree[cur].l+tree[cur].r)>>1;
-        if(index>mid)cur = rc(cur);
-        else cur = lc(cur);
-    }
-    ans += tree[cur].v;
-    return ans;
+    graph[a][b] = 1;
+    ++graph[a][0];
+    ++graph[0][b];
 }
 
-inline void color(int pos,int left,int right)
+inline bool nextMatch(girl x)
 {
-    if(tree[pos].l>=left&&tree[pos].r<=right)
-    {
-        ++tree[pos].v;
-        return;
-    }
-    int mid = (tree[pos].l+tree[pos].r)>>1;
-    if(left<=mid)color(lc(pos),left,mid);
-    if(right>mid)color(rc(pos),mid+1,right);
+    for(int i=couple[x]+1;i<=N;++i)
+        if(graph[x][i])
+            if(!match[i]||nextMatch(match[i]))
+            {
+                couple[x] = i;
+                match[i] = x;
+                return true;
+            }
+    return false;
+}
+
+inline int maxMatch()
+{
+    int matched = 0;
+    for(int i=1;i<=M;++i)
+        if(nextMatch(i))++matched;
+    return matched;
 }
 
 int main()
@@ -64,22 +64,19 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    while(cin>>n)
+    while(cin>>K&&K)
     {
-        if(!n)break;
-        memset(tree,0,sizeof(tree));
-        buildTree(0,1,n);
-        N=n;
-        while(n--)
+        cin>>M>>N;
+        initialArrays();
+
+        for(int i=0;i<K;++i)
         {
             cin>>a>>b;
-            color(0,a,b);
+            addEdge(a,b);
         }
-        cout<<getAns(1);
-        for(int i=2;i<=N;++i)
-            cout<<' '<<getAns(i);
-        cout<<endl;
-    }
 
+        cout<<maxMatch()<<endl;
+    }
+   
     return 0;
 }
