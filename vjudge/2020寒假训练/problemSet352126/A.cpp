@@ -1,30 +1,64 @@
 /**
- * 二分图
+ * 二分图最大匹配
+ * König定理：最小覆盖点数=最大匹配数
  *
+ * 所以这个题目是复习匈牙利算法？
+ * 怎么就WA了呢（）
+ * 
+ * 对于每一组数据，我操？
+ * 我仏了还有哪里搞错了吗==
+ * 怎么还能MLE的？
  */
 #include <iostream>
-#include <vector>
+#include <cstring>
+
+#define indegree(x) (graph[0][x])
+#define outdegree(x) (graph[x][0])
 
 using namespace std;
-struct boy
-{
-    int num;int* indegree;
-    bool operator<(const boy& rhs) const;
-};
-struct girl
-{
-    int num;int* outdegree;
-    bool operator<(const girl& rhs) const;
-};
+typedef int boy;
+typedef int girl;
 
 int K,M,N;
 int a,b;
-int outdegree[550]{0};
-vector<boy> edgelist[505];
+int graph[505][505]{0};
 
-inline void addEdge(int a, int b)
+girl match[550]{0};
+boy couple[550]{0};
+
+void initialArrays()
 {
-    
+    memset(graph,0,sizeof(graph));
+    memset(match,0,sizeof(match));
+    memset(couple,0,sizeof(couple));
+}
+
+inline void addEdge(girl a, boy b)
+{
+    graph[a][b] = 1;
+    // ++graph[a][0];
+    // ++graph[0][b];
+}
+
+bool nextMatch(girl x)
+{
+    for(int i=couple[x]+1;i<=N;++i)
+        if(graph[x][i])
+            if(!match[i]||nextMatch(match[i]))
+            {
+                couple[x] = i;
+                match[i] = x;
+                return true;
+            }
+    return false;
+}
+
+inline int maxMatch()
+{
+    int matched = 0;
+    for(int i=1;i<=M;++i)
+        if(nextMatch(i))++matched;
+    return matched;
 }
 
 int main()
@@ -32,12 +66,19 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    cin>>K>>M>>N;
-    for(int i=0;i<K;++i)
+    while(cin>>K&&K)
     {
-        cin>>a>>b;
+        cin>>M>>N;
+        initialArrays();
 
+        for(int i=0;i<K;++i)
+        {
+            cin>>a>>b;
+            addEdge(a,b);
+        }
+
+        cout<<maxMatch()<<endl;
     }
-    cin>>a;
-
+   
+    return 0;
 }
