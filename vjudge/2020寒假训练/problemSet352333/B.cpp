@@ -3,6 +3,8 @@
  *
  * double精度有问题。遇到就尽量转化为别的东西。
  * cost最后只是和关卡有关：你的级别越低花销越小。
+ * 
+ * TLE: 
  */
 #include <iostream>
 #include <cstring>
@@ -13,7 +15,6 @@
 #define cost(a) ((double)(nowlvl+a)/(double)nowlvl)
 #define nowpos cur.togo
 #define nowlvl cur.lvl
-#define nowdis cur.lcost
 
 using namespace std;
 typedef long long longs;
@@ -22,7 +23,7 @@ struct edge
 {
     int togo;
     longs lvl;
-    longs lcost;      // Maybe double
+    longs lcost;     
     bool operator<(const edge& rhs) const;
     bool operator>(const edge& rhs) const;
 };
@@ -32,7 +33,7 @@ int t,n,m;
 int u,v,a,b;
 longd ans = 0;
 vector<edge> edgelist[100010];
-
+longs lowlvl[100010];
 
 inline void all_clear()
 {
@@ -42,44 +43,39 @@ inline void all_clear()
 
 inline void add_edge(int u,int v,int a,int b)
 {
-//    edgelist[u].push_back({v,a,b});
     edgelist[u].push_back({v,a,1<<b});
 }
 
 inline bool dijkstra()
 {
     heap table;
-//    bool visit[100010]{0};
-    longs dist[100010];
-    memset(dist,0x3f,sizeof(dist));
+    memset(lowlvl,0x3f,sizeof(lowlvl));
 
-    dist[1] = 1;    // log2(1) = 0
+    lowlvl[1] = 1;    // log2(1) = 0
     table.push({1,1,1});
     edge cur;
     while(!table.empty())
     {
         cur = table.top();
         table.pop();
-//        if(visit[nowpos])continue;
-//        visit[nowpos] = true;
-        if(dist[nowpos]<nowdis)continue;
+        if(lowlvl[nowpos]<=nowlvl)continue;
         longs costs;
 
         for(auto i : edgelist[nowpos])
         {
             costs = cost(i.lvl);
             if(costs<i.lcost)continue;
-            if(dist[i.togo]>dist[nowpos]*costs)
+            if(lowlvl[i.togo]>nowlvl+i.lvl)
             {
-                dist[i.togo] = dist[nowpos]*costs;
-                table.push({i.togo,nowlvl+i.lvl,dist[i.togo]});
+                lowlvl[i.togo] = nowlvl+i.lvl;
+                table.push({i.togo,lowlvl[i.togo],1});
             }
         }
     }
-    if(dist[0]==dist[n])return false;
+    if(lowlvl[0]==lowlvl[n])return false;
     else
     {
-        ans = log2l(dist[n]);
+        ans = log2l(lowlvl[n]);
         return true;
     }
 }
