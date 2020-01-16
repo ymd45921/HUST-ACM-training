@@ -3,8 +3,8 @@
  *
  * double精度有问题。遇到就尽量转化为别的东西。
  * cost最后只是和关卡有关：你的级别越低花销越小。
- * 
- * TLE: 
+ *
+ * TLE: 原因是你弃用了cost但是还用它作为判据。
  */
 #include <iostream>
 #include <cstring>
@@ -12,7 +12,7 @@
 #include <queue>
 #include <cmath>
 
-#define cost(a) ((double)(nowlvl+a)/(double)nowlvl)
+#define cost(a) ((double)a/(double)nowlvl+1)
 #define nowpos cur.togo
 #define nowlvl cur.lvl
 
@@ -23,11 +23,16 @@ struct edge
 {
     int togo;
     longs lvl;
-    longs lcost;     
-    bool operator<(const edge& rhs) const;
-    bool operator>(const edge& rhs) const;
+    longs lcost;
 };
-typedef priority_queue<edge,vector<edge>,greater<edge>> heap;
+struct point
+{
+    int togo;
+    longs lvl;
+    bool operator<(const point& rhs) const;
+    bool operator>(const point& rhs) const;
+};
+typedef priority_queue<point,vector<point>,greater<point>> heap;
 
 int t,n,m;
 int u,v,a,b;
@@ -52,13 +57,13 @@ inline bool dijkstra()
     memset(lowlvl,0x3f,sizeof(lowlvl));
 
     lowlvl[1] = 1;    // log2(1) = 0
-    table.push({1,1,1});
-    edge cur;
+    table.push({1,1});
+    point cur;
     while(!table.empty())
     {
         cur = table.top();
         table.pop();
-        if(lowlvl[nowpos]<=nowlvl)continue;
+        if(lowlvl[nowpos]<nowlvl)continue;
         longs costs;
 
         for(auto i : edgelist[nowpos])
@@ -68,7 +73,7 @@ inline bool dijkstra()
             if(lowlvl[i.togo]>nowlvl+i.lvl)
             {
                 lowlvl[i.togo] = nowlvl+i.lvl;
-                table.push({i.togo,lowlvl[i.togo],1});
+                table.push({i.togo,lowlvl[i.togo]});
             }
         }
     }
@@ -102,12 +107,12 @@ int main()
     return 0;
 }
 
-bool edge::operator<(const edge& rhs) const
+bool point::operator<(const point& rhs) const
 {
-    return lcost<rhs.lcost;
+    return lvl<rhs.lvl;
 }
 
-bool edge::operator>(const edge& rhs) const
+bool point::operator>(const point& rhs) const
 {
-    return lcost>rhs.lcost;
+    return lvl>rhs.lvl;
 }
