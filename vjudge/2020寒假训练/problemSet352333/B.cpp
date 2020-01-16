@@ -4,19 +4,124 @@
  * double精度有问题。遇到就尽量转化为别的东西。
  * cost最后只是和关卡有关：你的级别越低花销越小。
  *
- * TLE: 原因是你弃用了cost但是还用它作为判据。
+ * TLE: 原因是弃用了lcost但是还用它作为判据。
+ * WA: 重写的版本最后一个错误是比较的时候没有log2，推测原版本也是这方面混乱了
  */
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <cmath>
+#include <cstring>
+#include <utility>
+
+#define lvl first
+#define num second
+
+using namespace std;
+typedef long long longs;
+typedef pair<longs,int> point;
+struct edge {int to; longs a,b;};
+typedef priority_queue<point,vector<point>,greater<point> > heap;
+
+// information IO
+int t,n,m;
+int u,v;
+longs a,b;
+
+// forward-star
+int head[100010];
+edge elist[200020];
+int nextptr[200010];
+int ptr;
+
+// dijkstra
+longs dis[100010];
+bool vis[100010];
+
+inline void initialize()
+{
+    memset(head,0,sizeof(head));
+    ptr = 0;
+}
+
+inline void addedge(int u,int v,longs a,longs b)
+{
+    ++ptr;
+    nextptr[ptr] = head[u];
+    head[u] = ptr;
+    elist[ptr] = {v,a,b};
+}
+
+inline longs dijkstra()
+{
+    heap que;
+    memset(dis,0x3f,sizeof(dis));
+    memset(vis,0,sizeof(vis));
+    const longs inf = dis[0];
+
+    dis[1] = 1;
+    que.push({1,1});
+    point cur;
+    long double cost;
+
+    while(!que.empty())
+    {
+        cur = que.top();
+        que.pop();
+        if(vis[cur.num])continue;
+        vis[cur.num] = true;
+
+        for(int i=head[cur.num];i;i=nextptr[i])
+        {
+            edge& now = elist[i];
+            cost = (long double)(cur.lvl+now.a)/cur.lvl*1.0;
+            if(log2l(cost)<elist[i].b) continue;
+            if(dis[now.to]>dis[cur.num]+now.a)
+            {
+                dis[now.to] = dis[cur.num]+now.a;
+                que.push({dis[now.to],now.to});
+            }
+        }
+    }
+
+    if(dis[n]==inf)return -1;
+    else return log2l(dis[n]);
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin>>t;
+    while(t--)
+    {
+        initialize();
+        cin>>n>>m;
+        while(m--)
+        {
+            cin>>u>>v>>a>>b;
+            addedge(u,v,a,b);
+        }
+        cout<<dijkstra()<<endl;
+    }
+
+    return 0;
+}
+
+
+/*
 #include <iostream>
 #include <cstring>
 #include <vector>
 #include <queue>
 #include <cmath>
 
-#define cost(a) ((double)a/(double)nowlvl+1)
+#define cost(a) ((double)a/(double)nowlvl+1.0)
 #define nowpos cur.togo
 #define nowlvl cur.lvl
 
-#define _FORWARDSTAR_
+#define _EDGELIST_
 
 using namespace std;
 typedef long long longs;
@@ -58,9 +163,7 @@ inline void all_clear()
 #ifdef _EDGELIST_
     for(int i=1;i<=n;++i)edgelist[i].clear();
 #elif defined _FORWARDSTAR_
-    memset(edges,0,sizeof(edges));
     memset(headptr,0,sizeof(headptr));
-    memset(nextptr,0,sizeof(nextptr));
     memset(cnt,0,sizeof(cnt));
     ptr = 0;
 #endif
@@ -93,7 +196,7 @@ inline bool dijkstra()
         cur = table.top();
         table.pop();
         if(lowlvl[nowpos]<nowlvl)continue;
-        longs costs;
+        longd costs;
 #ifdef _EDGELIST_
         for(auto i : edgelist[nowpos])
         {
@@ -118,7 +221,7 @@ inline bool dijkstra()
         }
 #endif
     }
-    if(lowlvl[0]==lowlvl[n])return false;
+    if(0x3f3f3f3f3f3f3f3f==lowlvl[n])return false;
     else
     {
         ans = log2l(lowlvl[n]);
@@ -157,3 +260,4 @@ bool point::operator>(const point& rhs) const
 {
     return lvl>rhs.lvl;
 }
+*/
