@@ -16,11 +16,16 @@
 #define nowpos cur.togo
 #define nowlvl cur.lvl
 
+#define _FORWARDSTAR_
+
 using namespace std;
 typedef long long longs;
 typedef long double longd;
 struct edge
 {
+#ifdef _FORWARDSTAR_
+    int from;
+#endif
     int togo;
     longs lvl;
     longs lcost;
@@ -37,18 +42,42 @@ typedef priority_queue<point,vector<point>,greater<point>> heap;
 int t,n,m;
 int u,v,a,b;
 longd ans = 0;
-vector<edge> edgelist[100010];
 longs lowlvl[100010];
+#ifdef _EDGELIST_
+vector<edge> edgelist[100010];
+#elif defined _FORWARDSTAR_
+edge edges[200010];
+int ptr = 0;
+int headptr[100010]{0};
+int nextptr[200010]{0};
+int cnt[100010]{0};
+#endif
 
 inline void all_clear()
 {
+#ifdef _EDGELIST_
     for(int i=1;i<=n;++i)edgelist[i].clear();
+#elif defined _FORWARDSTAR_
+    memset(edges,0,sizeof(edges));
+    memset(headptr,0,sizeof(headptr));
+    memset(nextptr,0,sizeof(nextptr));
+    memset(cnt,0,sizeof(cnt));
+    ptr = 0;
+#endif
     ans = 0;
 }
 
 inline void add_edge(int u,int v,int a,int b)
 {
+#ifdef _EDGELIST_
     edgelist[u].push_back({v,a,1<<b});
+#elif defined _FORWARDSTAR_
+    ++ptr;
+    nextptr[ptr] = headptr[u];
+    headptr[u] = ptr;
+    edges[ptr] = {u,v,a,1<<b};
+    ++cnt[u];
+#endif
 }
 
 inline bool dijkstra()
@@ -65,7 +94,7 @@ inline bool dijkstra()
         table.pop();
         if(lowlvl[nowpos]<nowlvl)continue;
         longs costs;
-
+#ifdef _EDGELIST_
         for(auto i : edgelist[nowpos])
         {
             costs = cost(i.lvl);
@@ -76,6 +105,18 @@ inline bool dijkstra()
                 table.push({i.togo,lowlvl[i.togo]});
             }
         }
+#elif defined _FORWARDSTAR_
+        for(int i=headptr[nowpos];i;i=nextptr[i])
+        {
+            costs = cost(edges[i].lvl);
+            if(costs<edges[i].lcost) continue;
+            if(lowlvl[edges[i].togo]>nowlvl+edges[i].lvl)
+            {
+                lowlvl[edges[i].togo] = nowlvl+edges[i].lvl;
+                table.push({edges[i].togo,lowlvl[edges[i].togo]});
+            }
+        }
+#endif
     }
     if(lowlvl[0]==lowlvl[n])return false;
     else
