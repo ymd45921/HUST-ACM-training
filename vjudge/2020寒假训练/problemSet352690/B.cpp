@@ -7,12 +7,19 @@
  * 最大流是一定的，但不是唯一的，选择费用最少的最大流吧
  *
  * 从当前的可行流出发，寻找费用最少的增广流
+ *
+ * POJ的尿性：
+ * abs(int):int 必须来自cstdlib
+ * <<T> > 必须要有空格，不可以是>>
+ * 不认识nullptr 无法读入优化
+ * 
+ * TLE: 写的太丑了嘛…………
  */
 #include <iostream>
 #include <utility>
 #include <cstring>
 #include <queue>
-#include <cmath>
+#include <cstdlib>
 
 #define togo first.first
 #define flow first.second
@@ -27,7 +34,7 @@
 #define man(x) (1+cnth+x)
 
 using namespace std;
-typedef pair<pair<int,int>,pair<int,int>> edge;
+typedef pair< pair<int,int>, pair<int,int> > edge;
 typedef pair<int,int> point;
 
 int n,m;
@@ -51,7 +58,7 @@ int suend;
 // spfa & solution
 int dis[250];
 bool visit[250];
-int pre[250];
+int pre[250];           // 用于记录路径：当前dis来源的边的指针
 int maxflow,mincost;
 
 inline void reInitialize()
@@ -116,7 +123,7 @@ inline bool spfa(int start,int end)
                 dis[that.togo] > dis[thispoint]+that.cost)  // spfa 经典条件
             {
                 dis[that.togo] = dis[thispoint]+that.cost;
-                pre[that.togo] = i;
+                pre[that.togo] = i;                         // 记录此边
                 if(!visit[that.togo])
                 {
                     visit[that.togo] = true;
@@ -126,7 +133,7 @@ inline bool spfa(int start,int end)
         }
     }
 
-    return pre[end];
+    return pre[end];        // 空边为0；如果终点记录了路径，说明找到了，返回true
 }
 
 inline int solution()
@@ -137,11 +144,11 @@ inline int solution()
     mincost = maxflow = 0;
     while(spfa(subegin,suend))
     {
-        int delta = inf;
-        for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])
+        int delta = inf;        // 尝试寻找增广流：最大剩余流量
+        for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])   // 按路径倒推
             if(delta > edgelist[i].capa - edgelist[i].flow)
                 delta = edgelist[i].capa - edgelist[i].flow;
-        for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])
+        for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])   // 刷新路径最大流
         {
             edgelist[i].flow += delta;
             edgelist[i+1].flow -= delta;
@@ -157,8 +164,8 @@ inline int solution()
 
 int main()
 {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+//    ios::sync_with_stdio(false);
+//    cin.tie(nullptr);
 
     while(cin>>n>>m&&n&&m)
     {
