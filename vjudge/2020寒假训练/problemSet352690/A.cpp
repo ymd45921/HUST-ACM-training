@@ -21,35 +21,32 @@ using namespace std;
 int n,m;
 int u,v;
 vector<int> edgelist[20010];
-int indegree[20010];
+int inDegree[20010];
 
-//tarjan
 int dfn[20010];
 int low[20010];
-bool instack[20010];
-int nextdfn;
+bool inStack[20010];
+int nextDfn;
 stack<int> desk;
 
-// scc new graph
-// vector<int> scclist[20010];
 int belong[20010];
-int sccin[20010];
-int sccout[20010];
-int nextscc;
+int sccIn[20010];
+int sccOut[20010];
+int nextSCC;
 
-int incnt,outcnt;
+int INcnt,OUTcnt;
 
 inline void addedge(int u,int v)
 {
     edgelist[u].push_back(v);
-    ++indegree[v];
+    ++inDegree[v];
 }
 
 inline void tarjan(int thispoint)
 {
-    dfn[thispoint] = low[thispoint] = nextdfn++;
+    dfn[thispoint] = low[thispoint] = nextDfn++;
     desk.push(thispoint);
-    instack[thispoint] = true;
+    inStack[thispoint] = true;
 
     for(auto i : edgelist[thispoint])
     {
@@ -58,20 +55,20 @@ inline void tarjan(int thispoint)
             tarjan(i);
             low[thispoint] = min(low[thispoint],low[i]);
         }
-        else if(instack[i])
+        else if(inStack[i])
             low[thispoint] = min(low[thispoint],low[i]);
     }
 
     if(dfn[thispoint]==low[thispoint])
     {
         int cur;
-        ++nextscc;
+        ++nextSCC;
         do
         {
             cur = desk.top();
             desk.pop();
-            instack[cur] = false;
-            belong[cur] = nextscc;
+            inStack[cur] = false;
+            belong[cur] = nextSCC;
         } while (thispoint-cur);
     }
 }
@@ -79,26 +76,26 @@ inline void tarjan(int thispoint)
 inline void initialize()
 {
     memset(belong,0,sizeof(belong));
-    memset(sccin,0,sizeof(sccin));
-    memset(sccout,0,sizeof(sccin));
-    memset(indegree,0,sizeof(indegree));
+    memset(sccIn,0,sizeof(sccIn));
+    memset(sccOut,0,sizeof(sccIn));
+    memset(inDegree,0,sizeof(inDegree));
     for(int i=1;i<=n;++i)   // 是[1,n]啊kora，你在初始化什么啊团长！
         edgelist[i].clear();
     memset(dfn,0,sizeof(dfn));
     memset(low,0,sizeof(low));
-    memset(instack,0,sizeof(instack));
-    nextdfn = 1;
-    nextscc = incnt = outcnt = 0;
+    memset(inStack,0,sizeof(inStack));
+    nextDfn = 1;
+    nextSCC = INcnt = OUTcnt = 0;
 }
 
-inline void countnewgraph()
+inline void newSCCgraph()
 {
     for(int i=1;i<=n;++i)
         for(int edge : edgelist[i])
             if(belong[i]-belong[edge])
             {
-                ++sccin[belong[edge]];
-                ++sccout[belong[i]];
+                ++sccIn[belong[edge]];
+                ++sccOut[belong[i]];
             }
 }
 
@@ -124,17 +121,17 @@ int main()
 
         for(int i=1;i<=n;++i)
             if(!dfn[i])tarjan(i);
-        if(nextscc==1)
+        if(nextSCC==1)
         {
             cout<<0<<endl;
             continue;
         }
-        countnewgraph();
-        for(int i=1;i<=nextscc;++i)
+        newSCCgraph();
+        for(int i=1;i<=nextSCC;++i)
         {
-            if(!sccin[i])++incnt;
-            if(!sccout[i])++outcnt;
+            if(!sccIn[i])++INcnt;
+            if(!sccOut[i])++OUTcnt;
         }
-        cout<<max(incnt,outcnt)<<endl;
+        cout<<max(INcnt,OUTcnt)<<endl;
     }
 }
