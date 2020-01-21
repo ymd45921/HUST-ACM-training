@@ -12,19 +12,14 @@
  * abs(int):int 必须来自cstdlib
  * <<T> > 必须要有空格，不可以是>>
  * 不认识nullptr 无法读入优化
- * 
+ *
  * TLE: 写的太丑了嘛…………
  */
-#include <iostream>
+#include <cstdio>
 #include <utility>
 #include <cstring>
 #include <queue>
 #include <cstdlib>
-
-#define togo first.first
-#define flow first.second
-#define capa second.first
-#define cost second.second
 
 #define _suend_ (2+cnth+cntm)
 #define X first
@@ -34,7 +29,7 @@
 #define man(x) (1+cnth+x)
 
 using namespace std;
-typedef pair< pair<int,int>, pair<int,int> > edge;
+struct edge { int togo,flow,capa,cost; };
 typedef pair<int,int> point;
 
 int n,m;
@@ -67,18 +62,16 @@ inline void reInitialize()
     memset(head,0,sizeof(head));
 }
 
-inline void addEdge(int from,int to,int _capa,int _cost)
+inline void addBiConnectEdge(int from,int to,int _capa,int _cost)
 {
     ++ptr;
     nextptr[ptr] = head[from];
     head[from] = ptr;
-    edgelist[ptr] = {{to,0},{_capa,_cost}};
-}
-
-inline void addBiConnectEdge(int from,int to,int _capa,int _cost)
-{
-    addEdge(from,to,_capa,_cost);
-    addEdge(to,from,0,-_cost);
+    edgelist[ptr] = {to,0,_capa,_cost};
+    ++ptr;
+    nextptr[ptr] = head[to];
+    head[to] = ptr;
+    edgelist[ptr] = {from,0,0,-_cost};
 }
 
 inline int manhattan(const point& a,const point& b)
@@ -115,14 +108,16 @@ inline bool spfa(int start,int end)
         thispoint = que.front();
         que.pop();
         visit[thispoint] = false;
+        int nowcost;
 
         for(int i=head[thispoint];i;i=nextptr[i])
         {
             edge& that = edgelist[i];
+            nowcost = dis[thispoint]+that.cost;
             if( that.capa > that.flow &&                    // 剩余流条件
-                dis[that.togo] > dis[thispoint]+that.cost)  // spfa 经典条件
+                dis[that.togo] > nowcost)                   // spfa 经典条件
             {
-                dis[that.togo] = dis[thispoint]+that.cost;
+                dis[that.togo] = nowcost;
                 pre[that.togo] = i;                         // 记录此边
                 if(!visit[that.togo])
                 {
@@ -139,15 +134,17 @@ inline bool spfa(int start,int end)
 inline int solution()
 {
     int ans = 0;
-    buildGraph();
 
     mincost = maxflow = 0;
     while(spfa(subegin,suend))
     {
         int delta = inf;        // 尝试寻找增广流：最大剩余流量
+        int differ;
         for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])   // 按路径倒推
-            if(delta > edgelist[i].capa - edgelist[i].flow)
-                delta = edgelist[i].capa - edgelist[i].flow;
+        {
+            differ = edgelist[i].capa - edgelist[i].flow;
+            if(delta > differ) delta = differ;
+        }
         for(int i=pre[suend];i;i=pre[edgelist[i+1].togo])   // 刷新路径最大流
         {
             edgelist[i].flow += delta;
@@ -167,16 +164,17 @@ int main()
 //    ios::sync_with_stdio(false);
 //    cin.tie(nullptr);
 
-    while(cin>>n>>m&&n&&m)
+    while(scanf("%d%d",&n,&m)&&n&&m)
     {
         for(int i=1;i<=n;++i)
         {
-            cin>>map[i]+1;
+            scanf("%s",map[i]+1);
             for(int j=1;j<=m;++j)
                 if(map[i][j]=='m') mlist[++cntm] = {i,j};
                 else if(map[i][j]=='H') hlist[++cnth] = {i,j};
         }
-        cout<<solution()<<endl;
+        buildGraph();
+        printf("%d\n",solution());
     }
 
     return 0;
