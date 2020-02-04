@@ -14,16 +14,24 @@
  * 不认识nullptr 无法读入优化
  *
  * TLE: 写的太丑了嘛…………
- */
-
-/*
+ * 
+ * 爷真的麻了
+ * 
+ * i+1不过，i|1不过，改成i^1就他妈过了？
+ * 
+ * i|1 != i^1 : TLE => AC
+ * 服了都（）==
+ * 
+ * 记住了啊：
+ * i|1 => i^1 : TLE => AC
  *
  * 爷麻了==
+ *
+ * 垃圾POJ
  */
 #include <cstdio>
 #include <cstring>
 #include <queue>
-#include <vector>
 #include <cstdlib>
 
 using namespace std;
@@ -33,11 +41,9 @@ struct edge
     int flow;           // 边的当前剩余流量
     int cap;            // 边的最大容量
     int cost;           // 边单位流量费用
+    int next;           // 代替传统的nextptr数组
 };
 struct point { int x,y; };
-
-// 实用函数、宏 的定义
-inline int distance(const point& a,const point& b);
 
 // 定义的常量
 const int inf = 0x3f3f3f3f;
@@ -46,9 +52,10 @@ const int maxe = 25000;
 
 // 链式前向星：建图
 edge elist[maxe];
-vector<point> houses,men;
+point houses[maxp];
+point men[maxp];
+int house_cnt,man_cnt;
 int head[maxp];
-int nextptr[maxe];
 int ptr;
 
 // SPFA最短路径需要使用的变量
@@ -61,28 +68,18 @@ void initialize()
     // 初始化：链式前向星
     memset(head,-1,sizeof(head));
     ptr = -1;
-    houses.clear();
-    men.clear();
+    house_cnt = man_cnt = 0;
 }
 
-/*
- * 加边：向链式前向星的图中增加新的网络流双向边
- *
- * @param from 边的起始点
- * @param to 边的终点
- * @param capacity 边的最大容量
- * @param cost 边的单位费用
- */
 inline void add_edge(int from, int to, int capacity, int cost)
 {
     ++ptr;                      // 正向边：必定为偶数
-    nextptr[ptr] = head[from];
+    elist[ptr] = {to,capacity,capacity,cost,head[from]};
     head[from] = ptr;
-    elist[ptr] = {to,capacity,capacity,cost};
+
     ++ptr;                      // 反向边：无容量，必定为奇数
-    nextptr[ptr] = head[to];
+    elist[ptr] = {from,0,0,-cost,head[to]};
     head[to] = ptr;
-    elist[ptr] = {from,0,0,-cost};
 }
 
 bool spfa(int s,int t)
@@ -103,7 +100,7 @@ bool spfa(int s,int t)
         que.pop();
         visit[thispoint] = false;
 
-        for(int i=head[thispoint];~i;i=nextptr[i])
+        for(int i=head[thispoint];~i;i=elist[i].next)
         {
             that = elist[i].to;
             nowdis = dis[thispoint]+elist[i].cost;
@@ -130,12 +127,12 @@ int solution(int s,int t)
     while(spfa(s,t))
     {
         int delta = inf;
-        for(int i=path[t];~i;i=path[elist[i|1].to])
+        for(int i=path[t];~i;i=path[elist[i^1].to])
             delta = min(delta,elist[i].flow);
-        for(int i=path[t];~i;i=path[elist[i|1].to])
+        for(int i=path[t];~i;i=path[elist[i^1].to])
         {
             elist[i].flow -= delta;
-            elist[i|1].flow += delta;
+            elist[i^1].flow += delta;
             min_cost += elist[i].cost*delta;
         }
         max_flow += delta;
@@ -157,11 +154,11 @@ int main()
         {
             scanf("%s",s+1);
             for(int j=1;j<=m;++j)
-                if(s[j]=='H')houses.push_back({i,j});
-                else if(s[j]=='m')men.push_back({i,j});
+                if(s[j]=='H')houses[house_cnt++] = {i,j};
+                else if(s[j]=='m')men[man_cnt++] = {i,j};
         }
-        const int houses_size = houses.size();
-        const int men_size = men.size();
+        const int houses_size = house_cnt;
+        const int men_size = man_cnt;
 
         const int begin = 0;
         const int end = houses_size+men_size+1;
@@ -169,7 +166,10 @@ int main()
         {
             add_edge(begin,i+1,1,0);
             for(int j=0;j<houses_size;++j)
-                add_edge(i+1,j+1+men_size,1,distance(men[i],houses[j]));
+            {
+                int distance = abs(men[i].x-houses[j].x)+abs(men[i].y-houses[j].y);
+                add_edge(i+1,j+1+men_size,1,distance);
+            }
             add_edge(i+1+men_size,end,1,0);
         }
 
@@ -180,11 +180,7 @@ int main()
     return 0;
 }
 
-// 实用函数、宏 的实现
-inline int distance(const point& a,const point& b)
-{
-    return abs(a.x-b.x)+abs(a.y-b.y);
-}
+
 
 /* 有一个TLE的版本 */
 /*
