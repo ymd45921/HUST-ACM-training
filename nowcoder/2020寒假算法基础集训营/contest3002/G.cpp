@@ -1,8 +1,11 @@
 /**
- * 
+ *
+ * next你的妈
+ * 爬爬法就可以了
  */
 #include <iostream>
 #include <cstring>
+#include <algorithm>
 
 using namespace std;
 typedef long long longs;
@@ -10,20 +13,7 @@ typedef long double longd;
 
 int n,k;
 char str[1000010];
-int Next[1000010];
-int length;
-
-inline void buildNextArray()
-{
-    Next[0] = -1;
-    int i = 0, j = -1;
-    while(i<length)
-    {
-        if(-1==j||str[i]==str[j])
-            Next[++i] = ++j;
-        else j = Next[j];
-    }
-}
+int cnt[30]{0};
 
 int main()
 {
@@ -33,8 +23,23 @@ int main()
     while(cin>>n>>k)
     {
         cin>>str;
-        length = strlen(str);
-        
+        int ans = 0x3f3f3f3f;
+        memset(cnt,0,sizeof(cnt));
+        int head = 0,tail = 0;
+
+        while(head<n)
+        {
+            if(++cnt[str[head]-'a']>=k)
+            {
+                while(str[tail]!=str[head]||cnt[str[tail]-'a']>k)
+                    --cnt[str[tail++]-'a'];
+                if(head-tail+1<ans)ans = head-tail+1;
+            }
+            ++head;
+        }
+        if(ans==0x3f3f3f3f)ans = -1;
+
+        cout<<ans<<endl;
     }
 
     return 0;
