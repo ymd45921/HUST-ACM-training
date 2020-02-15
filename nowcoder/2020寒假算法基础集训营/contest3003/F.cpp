@@ -1,5 +1,10 @@
 /**
  * 
+ * 这个策略是真的迷惑……我觉得我能试的都试了啊==
+ * 
+ * 事啊题解说的我有想到啊（）
+ * 
+ * 日写代码的时候好像没有尝试这个
  */
 #include <iostream>
 #include <utility>
@@ -16,10 +21,9 @@ typedef long double longd;
 typedef pair<int,int> item;
 
 int n;
-item ali[200050],bli[200050];
-bool used[200050]{0};
+item li[200050];
+int in;
 vector<int> H,T;
-int cura,curb;
 
 int main()
 {
@@ -28,54 +32,29 @@ int main()
 
     while(cin>>n)
     {
-        memset(used,0,sizeof(used));
         H.clear(); T.clear();
-        cura = curb = n;
 
         for(int i=1;i<=n;++i)
         {
-            cin>>ali[i].val;
-            ali[i].num = i;
+            cin>>li[i].val;
+            li[i].num = i;
         }
         for(int i=1;i<=n;++i)
         {
-            cin>>bli[i].val;
-            bli[i].num = i;
+            cin>>in;
+            li[i].val += in;
         }
-        sort(ali+1,ali+1+n);
-        sort(bli+1,bli+1+n);
+        sort(li+1,li+1+n);
 
         for(int i=1;i<=n;++i)
         {
             if(i&1)
             {
-                while(used[cura])--cura;
-                while(used[curb])--curb;
-                if(ali[cura].val>bli[curb].val)
-                {
-                    used[cura] = true;
-                    H.push_back(ali[cura].num);
-                }
-                else
-                {
-                    used[curb] = true;
-                    H.push_back(bli[curb].num);
-                } 
+                H.push_back(li[n+1-i].num);
             }
             else
             {
-                while(used[cura])--cura;
-                while(used[curb])--curb;
-                if(ali[cura].val>bli[curb].val)
-                {
-                    used[cura] = true;
-                    T.push_back(ali[cura].num);
-                }
-                else
-                {
-                    used[curb] = true;
-                    T.push_back(bli[curb].num);
-                } 
+                T.push_back(li[n+1-i].num);
             }
         }
 
