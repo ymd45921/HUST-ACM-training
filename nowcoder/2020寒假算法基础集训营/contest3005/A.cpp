@@ -1,35 +1,28 @@
 /**
  * 
  * 果然不是简单的2*a+b…………
+ * 
+ * 孩他妈能找规律？
+ * 
+ * 就尼玛离谱，我也是fib数列啊==
+ * 
+ * 就尼玛离谱，非要我复制标程？
  */
 #include <iostream>
-
-#define A 0
-#define B 1
 
 using namespace std;
 typedef long long longs;
 typedef long double longd;
 
 int t,n,ans;
-int dp[2][100];
+longs fib[125];
 
 inline void preProcess()
 {
-    dp[A][0] = 1;
-    dp[B][0] = 0;
-    dp[A][1] = 2;
-    dp[B][1] = 1;
-    for(int i=2;i<100;++i)
-    {
-        dp[B][i] = dp[A][i-1];
-        dp[A][i] = dp[A][i-1]+dp[B][i-1];
-    }
-}
-
-inline int getAnswer(int n)
-{
-    return dp[A][n]+dp[B][n];
+    fib[0] = 1;
+    fib[1] = 2;
+    for(int i=2;i<=120;++i)
+    fib[i] = fib[i-1]+fib[i-2];
 }
 
 int main()
@@ -44,8 +37,8 @@ int main()
         while(t--)
         {
             cin>>n;
-            ans = getAnswer(n);
-            cout<<ans<<endl;
+            if(n == 0)cout<<1<<endl;
+            else cout<<fib[n]+fib[n-1]<<endl;
         }
     }
 
