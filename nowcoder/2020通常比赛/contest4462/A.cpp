@@ -2,6 +2,8 @@
  * 
  * 对于map，查询就是新增默认值。
  * 这个题目需要擦除的
+ *
+ * 可以平衡树在线解决（题解）
  */
 #include <bits/stdc++.h>
 using namespace std;
