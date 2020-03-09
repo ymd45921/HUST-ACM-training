@@ -342,3 +342,4 @@ healthchecksdb
 #User Added
 *.exe
 */.vscode/*
+.vscode
