@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <cstring>
 
-#define var() (n*m + 47)        // 相当于是INF值，意义不明
+#define var() (n*m + 47)        // 相当于是INF值，意义不明：确实可以INF
 #define toChar(x) ('0' + x)
 #define pin [st][ed][pos][x]
 
