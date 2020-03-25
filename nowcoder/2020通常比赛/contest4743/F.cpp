@@ -3,7 +3,8 @@
 
 using namespace std;
 typedef long long longs;
-typedef long double longd;
+
+
 
 int main()
 {
