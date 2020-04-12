@@ -1,17 +1,15 @@
 /**
  *
+ * 那么，原版的最大环应该怎么解呢？
  *
+ * 纯DP还是有不少坑的==
+ * 一堆傻逼错误（）
  */
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <cstring>
 #include <functional>
-#include <queue>
-
-#define Continue return true
-#define Break return false
-#define Return return true
 
 using namespace std;
 typedef long long longs;
@@ -22,8 +20,8 @@ const int inf = 0x7fffffff;
 const longs INF = 0x7fffffffffffffff;
 const double eps = 1e-8;
 
-bool op[N], ed[N];
-int xx[N];
+
+int dp[N][N];
 
 struct edge
 {
@@ -38,23 +36,21 @@ namespace FWS
     int head[N];
     int tot;
     edge ee[M*2];
+    bool op[N], ed[N];
 
     const int n = 26;
 
     void init()
     {
         memset(head, -1, sizeof(int)*(n+1));
+        memset(op, 0, sizeof op);
+        memset(ed, 0, sizeof ed);
         tot = 0;
     }
 
     void addedge(int u, int v, int w)
     {
         op[u] |= true; ed[v] |= true;
-//        if (u == v)
-//        {
-//            xx[u] += w;
-//            return;
-//        }
         ee[tot] = edge(u,v,w,head[u]);
         head[u] = tot ++;
     }
@@ -103,6 +99,7 @@ namespace DFS
     int brute()
     {
         int ans = 0;
+        using FWS::op; using FWS::ed;
         for (int i = 0; i < 26; ++ i)
             if (op[i] && ed[i])
             {
@@ -111,39 +108,6 @@ namespace DFS
             }
         return ans;
     }
-
-    int find(int len, int u)
-    {
-        int ans = -1;
-        FWS::foreach(u, [&](int c, edge& e) -> bool
-        {
-            if (vis[c]) Continue;
-            int v = e.v;
-            int path = len + e.w;
-            if (v == __st)
-            {
-                ans = max(ans, path);
-                Continue;
-            }
-            vis[c] = true;
-            int maxx = find(path, v);
-            vis[c] = false;
-            Return;
-        });
-        return ans;
-    }
-
-    bool f(int mid)
-    {
-        __lim = mid;
-        for (int i = 0; i < 26; ++ i)
-        {
-            __st = i;
-            if (find(0,i) >= mid)
-                return true;
-        }
-        return false;
-    }
 }
 
 int main()
@@ -151,7 +115,41 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     FWS::init();
-    memset(xx, 0, sizeof xx);
+
+    auto ff = [&]() -> void             // 炸了
+    {
+        memset(dp, 0, sizeof dp);
+        using FWS::ee; using FWS::tot;
+        for (int i = 0; i < tot; ++ i)
+        {
+            edge& ii = ee[i];
+            for (int j = 0; j < 26; ++ j)
+                dp[j][ii.v] = max(dp[j][ii.v], dp[j][ii.u]+ii.w);
+        }
+    };
+
+    auto log = [&]()
+    {
+        for (int i = 0; i < 26; ++ i)
+        {
+            for (int j = 0; j < 26; ++ j)
+                cerr << dp[i][j] << ' ';
+            cerr << endl;
+        }
+    };
+
+    auto f = [&]() -> void
+    {
+        memset(dp, 0, sizeof dp);
+        using FWS::ee; using FWS::tot;
+        for (int i = 0; i < tot; ++ i)
+        {
+            edge& ii = ee[i];
+            for (int j = 0; j < 26; ++ j)
+                if(dp[j][ii.u] || j == ii.u)
+                    dp[j][ii.v] = max(dp[j][ii.v], dp[j][ii.u]+ii.w);
+        }
+    };
 
     int n; string s; longs sum = 0;
     cin >> n;
@@ -163,16 +161,15 @@ int main()
         sum += len;
     }
 
-    DFS::init(n);
-    cout << DFS::brute() << endl;
-//    int l = 0, r = sum;
-//    while (l < r)
-//    {
-//        int m = (l + r) >> 1;
-//        if (DFS::f(m)) l = m+1;
-//        else r = m-1;
-//    }
-//    cout << l;
+    // DFS::init(n);
+    // cout << DFS::brute() << endl;
+    f(); int ans = 0;
+    log();
+
+    for (int i = 0; i < 26; ++ i)
+//        if (FWS::op[i] && FWS::ed[i])
+            ans = max(ans, dp[i][i]);
+    cout << ans << endl;
 
     return 0;
 }
