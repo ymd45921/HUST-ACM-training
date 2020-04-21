@@ -1,102 +1,40 @@
 /**
  *
+ * 网络流：板子没有锅，那重写次好了
+ *
  * 因为节点数是 S + T + 7Days + nTasks，
  * 所以FWS初始化需要传入的 'n' = n + 9
  *
  * 网络流的题目debug是真的烦人==
+ *
+ * 离谱：重写一遍过（
  */
 #include <iostream>
 #include <cstring>
 #include <algorithm>
 #include <queue>
+#include <vector>
+#include <bitset>
+
+#define FN FlowNetwork
 
 using namespace std;
 using longs = long long;
 
-const int inf = 0x3f3f3f3f;
+const signed inf = 0x3f3f3f3f;
+const longs INF = 0x3f3f3f3f3f3f3f3f;
 const int N = 1050, M = N * 8;
-int n, e, c[N][8]{0}, sum = 0;
-#define FN FlowNetwork
+
+int n, e, c[N], sum;
+bitset<8> a[N];
 
 struct edge
 {
-    int u, v, w, next;
+    int u, v, next;
+    longs w;
     edge() = default;
-    edge(int u, int v, int w, int next)
+    edge(int u, int v, longs w, int next)
             : u(u), v(v), w(w), next(next) {}
-};
-
-template <int _n, int _m = _n*_n>
-class fws
-{
-    int head[_n+1];
-    int tot;
-    edge ee[_m];
-
-public:
-    class pointer : public iterator<forward_iterator_tag, edge>
-    {
-        int cur = -1;
-        edge* ptr = nullptr;
-
-        pointer () = default;
-
-    public:
-        pointer (int _x, edge* _y = nullptr) { cur = _x; ptr = _y; }
-
-        pointer &operator =(const pointer &rhs)
-        {
-            cur = rhs.cur;
-            ptr = rhs.ptr;
-            return *this;
-        }
-
-        bool operator==(const pointer &rhs) const { return cur == rhs.cur && ptr == rhs.ptr; }
-
-        bool operator!=(const pointer &rhs) const { return !(rhs == *this); }
-
-        pointer &operator ++()
-        {
-            int d = ptr->next - cur;
-            cur = ptr->next;
-            ptr = ~cur ? ptr + d : nullptr;
-            return *this;
-        }
-
-        pointer &operator ++(int)
-        {
-            auto tmp = *this;
-            int d = ptr->next - cur;
-            cur = ptr->next;
-            ptr = ~cur ? ptr + d : nullptr;
-            return tmp;
-        }
-
-        edge &operator *() { return *ptr; }
-    };
-
-    fws() {this->clear();}
-    fws(int n) {this->clear(n);}
-
-    void clear(int n = _n)
-    {
-        memset(head, -1, sizeof(int)*(n+1));
-        tot = 0;
-    }
-
-    void add_edge(int u, int v, int w)
-    {
-        ee[tot] = edge(u,v,w,head[u]);
-        head[u] = tot ++;
-    }
-
-    typedef pointer iterator;
-
-    edge &operator [](int ii) { return ee[ii]; }
-
-    iterator begin(int u) { return pointer(head[u], &ee[head[u]]); }
-
-    iterator end(int u = 0) { return pointer(-1, nullptr); }
 };
 
 namespace FWS
@@ -111,7 +49,7 @@ namespace FWS
         tot = 0;
     }
 
-    void addedge(int u, int v, int w)
+    void addedge(int u, int v, longs w)
     {
         ee[tot] = edge(u,v,w,head[u]);
         head[u] = tot ++;
@@ -120,117 +58,109 @@ namespace FWS
 
 namespace FlowNetwork
 {
-    using namespace FWS;
+    int dis[N], cur[N];
+    int S, T, cnt = 0;
 
-    int dis[N], __full, __cnt;
-    int __S, __T;
-    int __D[8], __P[N];
+    const int __event = 9, __day = 2;
+    auto event = [](int i){return __event+i;};
+    auto day = [](int i){return __day+i;};
 
-    auto __addedge = [](int u, int v, int w)
+    auto __addedge = [](int u, int v, longs w)
     {
-        addedge(u, v, w);
-        addedge(v, u, 0);
+        FWS::addedge(u, v, w);
+        FWS::addedge(v, u, 0);
     };
 
-    void makeGraph(int para)
+    auto __build = [](int t)
     {
-        FWS::init(n+9); __cnt = 0;              // 网络流节点数较多
-        __S = ++ __cnt; __T = ++ __cnt;
-        auto sdew = [&](int day)
-        {
-            int __x = para / 7 + (para % 7 >= day ? 1 : 0);
-            return __x * e;
-        };
-
+        cnt = 0; FWS::init(n+9);
+        S = ++ cnt; T = ++ cnt;
         for (int i = 1; i <= 7; ++ i)
-        {
-            __D[i] = ++ __cnt;
-            __addedge(__S, __D[i], sdew(i));
-        }
+            __addedge(S, ++ cnt, (t/7+(t%7>=i))*e);
         for (int i = 1; i <= n; ++ i)
         {
-            __P[i] = ++ __cnt;
-            __addedge(__P[i], __T, c[i][0]);
+            __addedge(++ cnt, T, c[i]);
             for (int j = 1; j <= 7; ++ j)
-                if (c[i][j]) __addedge(__D[i], __cnt, inf);
+                if (a[i][j]) __addedge(day(j), cnt, INF);
         }
-    }
+    };
 
     bool bfs()
     {
+        using namespace FWS;
         static queue<int> q;
-        memset(dis, 0x3f, sizeof(int)*(__cnt+1));
-        q.push(__S); dis[__S] = 0;
+        memset(dis, 0x3f, sizeof(int)*(cnt + 1));
+        q.push(S); dis[S] = 0;
         while (!q.empty())
         {
             int u = q.front(); q.pop();
             for (int cc = head[u]; ~cc; cc = ee[cc].next)
             {
                 edge& e = ee[cc]; int v = e.v, w = e.w;
+                cur[u] = head[u];
                 if (!w || dis[v] <= dis[u] + 1) continue;
                 dis[v] = dis[u] + 1; q.push(v);
             }
         }
-        return dis[__T] < inf;
+        return dis[T] != inf;
     }
 
-    int dfs(int u, int inflow)
+    longs dfs(int u, longs inflow)
     {
-        if (u == __T) return inflow;
-        int outflow = 0;
-        for (int cc = head[u]; ~cc; cc = ee[cc].next)
+        using namespace FWS;
+        if (u == T) return inflow;
+        longs outflow = 0, rest = inflow;
+        for (int &cc = cur[u]; ~cc; cc = ee[cc].next)
         {
-            edge &e = ee[cc]; int v = e.v, w = e.w;
+            edge &e = ee[cc]; int v = e.v; longs w = e.w;
             edge &r = ee[cc ^ 1];
             if (!w || dis[v] != dis[u] + 1) continue;
-            int t = dfs(v, min(w, inflow - outflow));
-            outflow += t; e.w -= t; r.w += t;
-            if (inflow == outflow) break;
+            longs t = dfs(v, min(w, rest));
+            outflow += t; e.w -= t; r.w += t; rest -= t;
+            if (!rest) break;
         }
         if (!outflow) dis[u] = 0;
         return outflow;
     }
 
-    int dinic()
+    longs dinic()
     {
-        int ans = 0;
-        while (bfs()) ans += dfs(__S, inf);
-        return ans;
-    }
-
-    bool check(int mid)
-    {
-        if (e * mid < __full) return false;     // 本题优化
-        makeGraph(mid);
-        return dinic() == __full;
+        longs maxflow = 0;
+        while (bfs()) maxflow += dfs(S, INF);
+        return maxflow;
     }
 }
 
-int main()
+signed main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int m, x;
-    memset(c, 0, sizeof c);
     cin >> n >> e;
+    int m, x; sum = 0;
     for (int i = 1; i <= n; ++ i)
     {
-        cin >> c[i][0] >> m;
-        sum += c[i][0];
+        cin >> c[i] >> m;
+        sum += c[i];
         while (m --)
         {
             cin >> x;
-            ++ c[i][x];
+            a[i][x] = true;
         }
     }
-    FN::__full = sum;
 
-    int ll = 0, rr = inf / e, ans = -1;         // 防止 mid*e > int
+    auto check = [&](int mid)
+    {
+        if (e * mid < sum) return false;        // 本题优化
+        FN::__build(mid);
+        return FN::dinic() == sum;
+    };
+
+    int ll = 0, rr = inf / e, ans = 0;          // 防止 mid*e > int
     while (ll <= rr)
     {
-        int mm = (ll + rr) / 2;
-        if (FN::check(mm)) ans = mm --, rr = mm;
+        int mm = ll + rr >> 1;
+        if (check(mm)) ans = mm, rr = -- mm;
         else ll = ++ mm;
     }
     cout << ans << endl;
