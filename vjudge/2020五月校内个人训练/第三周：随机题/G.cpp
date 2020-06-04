@@ -1,33 +1,23 @@
-/**
- *
- * 题目保证每一个数字都是不同的
- *
- * 可以正经的拿线段树，也可以巧妙的使用并查集；
- * 可不可以拿珂朵莉树乱搞呢，感觉不是不行（
- *
- * 这nm竟然也是二分单调性，草==
- * npa（直接回避了记录最小值
- *
- * TODO: 没有彻底的理解，需要再好好看看
- */
-#include <iostream>
+#include <cstdio>
+#include <cctype>
 #include <algorithm>
-#include <cstring>
 
 using namespace std;
-typedef long long longs;
-
-const int inf = 0x3f3f3f3f;
-const double eps = 1e-8;
 
 const int N = 1e6 + 5;
 const int Q = 25005;
 
+inline int nextInt()
+{
+    int x=0,f=1;char ch=getchar();
+    while (!isdigit(ch)){if (ch=='-') f=-1;ch=getchar();}
+    while (isdigit(ch)){x=(x<<1)+(x<<3)+ch-48;ch=getchar();}
+    return x*f;
+}
+
 struct triple
 {
     int l, r, v;
-    triple() = default;
-    triple(int l, int r, int v) : l(l), r(r), v(v) {}
 
     bool operator< (const triple &rhs) const
     {
@@ -38,7 +28,7 @@ struct triple
 
 namespace UFS
 {
-    using number = int;
+    typedef int number;
     number p[N];
 
     void init(int n = N)
@@ -60,7 +50,6 @@ namespace UFS
 
 bool check(int mid)
 {
-    UFS::init();
     for (int i = 1; i <= mid; ++ i)
         xx[i] = query[i];
     sort(xx + 1, xx + 1 + mid);
@@ -80,7 +69,7 @@ bool check(int mid)
             if (UFS::father(lmax) > rmin) return false;
             for (int j = UFS::father(lmin);; j = UFS::father(j + 1))
                 if (j > rmax) break;
-                else UFS::join(j, j + 1);
+                else UFS::join(j, j + 1);   // Join 是对的，但是速度更慢；直接改吧
             now = xx[i].v;
             lmin = lmax = xx[i].l, rmin = rmax = xx[i].r;
         }
@@ -89,22 +78,23 @@ bool check(int mid)
 
 int main()
 {
-    ios::sync_with_stdio(false);
-    cin.tie(0); cout.tie(0);
-//    freopen(R"(D:\shiroha\Downloads\P2898_2.in)", "r", stdin);
-
+//    freopen(R"(D:\shiroha\Downloads\P2898_9.in)", "r", stdin);
     int n, q, ll, rr, vv;
-    cin >> n >> q;
+    n = nextInt(), q = nextInt();
     for (int i = 1; i <= q; ++ i)
-        cin >> query[i].l >> query[i].r >> query[i].v;
-    ll = 1, rr = q;
-    while (ll <= rr)
+        query[i].l = nextInt(),
+        query[i].r = nextInt(),
+        query[i].v = nextInt();
+    ll = 0, rr = q + 1;
+    while (ll < rr - 1)
     {
-        auto mid = ll + rr >> 1u;
-        if (check(mid)) vv = mid ++, ll = mid;
-        else rr = -- mid;
+        int mid = ll + rr >> 1u;
+        UFS::init(n + 2);   // 这里得 +2
+        if (check(mid)) ll = mid;
+        else rr = mid;
     }
-    cout << (vv >= q ? 0 : vv + 1) << endl;
+    vv = (rr > q ? 0 : rr);
+    printf("%d\n", vv);
 
     return 0;
 }
