@@ -1,5 +1,8 @@
 /**
  *
+ * 这样，虽然开销大了点（毕竟 STL map 遍历
+ * 但是看起来代码更加直观，也不太容易出奇怪的错误
+ *
  */
 #define USING_STDIO 0
 #if USING_STDIO
@@ -9,18 +12,14 @@
 #endif
 
 #include <algorithm>
-#include <cstring>
 #include <vector>
 #include <unordered_map>
 
-#define inbound(p, c) (p >= c.first && p <= c.second)
-#define AP ap.begin(), ap.end()
+#define Vec(x) (x).begin(), (x).end()
 
 using namespace std;
-typedef long long longs;
 
-const int inf = 0x3f3f3f3f;
-const double eps = 1e-8;
+const int N = 1050;
 
 #if USING_STDIO
 inline int nextInt()
@@ -35,83 +34,63 @@ inline int nextInt()
 using canvas = pair<int, int>;
 vector<canvas> ac;
 vector<int> ap;
-unordered_map<int, int> rp;
+int cnt[N];
 
 int main()
 {
 #if !USING_STDIO
     ios::sync_with_stdio(false);
-    cin.tie(0); cout.tie(0);
+    cin.tie(nullptr); cout.tie(nullptr);
 #endif
 
     int nc, np, l, r, x;
+    unordered_map<int, bool> vp;
     bool failed = false;
     cin >> nc;
     while (nc --)
     {
         cin >> l >> r;
-        if (!ac.empty() && ac.back().second == l) rp[l] = 1;
         ac.emplace_back(l, r);
     }
     nc = ac.size(); cin >> np;
     while (np --)
     {
         cin >> x;
-        if (rp.count(x) && rp[x]) rp[x] = -1;
         ap.push_back(x);
+        vp[x] = true;
     }
-    np = ap.size(); bool p1 = false, p2 = false;
+    np = ap.size();
     vector<int> add;
-    for (auto & ii : ac)
+    for (int i = 0; i < nc; ++ i)
     {
-        bool extend = (!add.empty() && add.back() == ii.first);
-        auto ll = lower_bound(AP, ii.first);
-        auto rr = upper_bound(AP, ii.second);
-        int cnt = rr - ll;
-        if (cnt > 2) { failed = true; break; }
-        else if (cnt == 2)
+        auto &ii = ac[i];
+        cnt[i] = upper_bound(Vec(ap), ii.second) - lower_bound(Vec(ap), ii.first);
+        if (cnt[i] > 2) {failed = true; break;}
+    }
+    if (!failed) for (int i = 0; i < nc - 1; ++ i)
+    {
+        if (cnt[i] == 2) continue;
+        auto &ii = ac[i];
+        if (cnt[i + 1] >= 2 || vp[ii.second] || ii.second != ac[i + 1].first)
+            for (int j = ii.first + 1; j < ii.second && cnt[i] < 2; ++ j)
+            {   if (!vp.count(j)) {add.push_back(j); ++ cnt[i]; vp[j] = true;}  }
+        else
         {
-            if (extend)
-            {
-                if (p1) add.back() -= 2;
-                else if (p2) add.back() -= 1;
-                else add.back() -= 3;
-            }
-            auto xx = rr - 1;
-            p1 = false, p2 = false;
-            if (xx == ap.end()) continue;
-            while (*xx >= ii.second - 3)
-            {
-                if (*xx == ii.second - 1) p1 = true;
-                else if (*xx == ii.second - 2) p2 = true;
-                -- xx;
-                if (xx == ap.end()) break;
-            }
-        }
-        else if (cnt < 2)
-        {
-            if (extend && cnt == 1) continue;
-            else if ((extend && cnt == 0) || (!extend && cnt == 1))
-            {
-                auto iii = ii.second - (ii.second - 1 == *ll ? 2 : 1);
-                if (rp.count(ii.second) && rp[ii.second] == -1)
-                    add.push_back(iii);
-                else add.push_back(ii.second);
-            }
-            else
-            {
-                add.push_back(ii.second - 4);
-                add.push_back(ii.second);
-            }
+            add.push_back(ii.second);
+            ++ cnt[i], ++ cnt[i + 1];
+            for (int j = ii.first + 1; j < ii.second && cnt[i] < 2; ++ j)
+                if (!vp.count(j)) {add.push_back(j); ++ cnt[i]; vp[j] = true;}
         }
     }
-    if (!add.empty() && ac.back().second == ap.back())
-        if (add.back() == ap.back()) -- add.back();
+    auto &bk = ac[nc - 1];
+    if (!failed) for (int i = bk.first + 1; i <= bk.second && cnt[nc - 1] < 2; ++ i)
+        if (!vp.count(i)) { add.push_back(i); ++ cnt[nc - 1]; vp[i] = true; }
     if (failed) cout << "impossible" << endl;
     else
     {
         cout << add.size() << endl;
-        for (auto & i : add) cout << i << ' ';
+        sort(Vec(add));
+        for (auto ii : add) cout << ii << ' ';
         cout << endl;
     }
 

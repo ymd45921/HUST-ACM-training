@@ -1,9 +1,11 @@
 /**
  *
+ *
  */
 #define USING_STDIO 0
 #if USING_STDIO
 #include <cstdio>
+#include <cctype>
 #else
 #include <iostream>
 #endif
@@ -28,6 +30,9 @@ inline int nextInt()
 }
 #endif
 
+const int N = 105;
+vector<unsigned> e, o;
+
 int main()
 {
 #if !USING_STDIO
@@ -35,5 +40,27 @@ int main()
     cin.tie(0); cout.tie(0);
 #endif
 
+    unsigned n, a; cin >> n;
+    unsigned even = 0, odd = 0, sum = 0, tmp = 0;
+    for (int i = 0; i < n; ++ i)
+    {
+        cin >> a;
+        if (a & 1u)
+        {
+            ++ odd;
+            o.push_back(a);
+            tmp += a;
+        } else
+        {
+            ++ even;
+            e.push_back(a);
+            sum += a;
+        }
+    }
+    sort(o.begin(), o.end());
+    if (odd & 1u) sum += tmp - o[0];
+    else sum += tmp;
+    cout << sum << endl;
+    
     return 0;
 }

@@ -1,22 +1,29 @@
 /**
- *
- */
+ * 
+ * 
+ */ 
 #define USING_STDIO 0
 #if USING_STDIO
 #include <cstdio>
+#include <cctype>
 #else
 #include <iostream>
+#include <iomanip>
 #endif
 
 #include <algorithm>
 #include <cstring>
-#include <vector>
 
 using namespace std;
 typedef long long longs;
 
 const int inf = 0x3f3f3f3f;
 const double eps = 1e-8;
+
+template <typename number>
+int compareTo(number x) {return x < -eps ? -1 : x > eps;}
+template <typename number>
+int compareTo(number a, number b) {return compareTo(a-b);}
 
 #if USING_STDIO
 inline int nextInt()
