@@ -100,7 +100,7 @@ namespace solution
     using TreeDia::dis;
     using TreeDia::ep;
 
-    void dfs$1(int u)
+    void dfs$1(int u)   // 标记在直径上的点
     {
         for (int c = head[u]; ~c; c = ee[c].next)
             if (dis[ee[c].v] > dis[u])
@@ -111,7 +111,7 @@ namespace solution
             }
     }
 
-    void dfs$2(int u, int root)
+    void dfs$2(int u, int root)     // 所有不在直径上的点，末端开始消除
     {
         for (int c = head[u]; ~c; c = ee[c].next)
             if (dis[ee[c].v] > dis[u])
@@ -129,7 +129,7 @@ namespace solution
     {
         open[ep.ed] = true;
         dfs$1(ep.st), dfs$2(ep.st, ep.st);
-        for (auto u = ep.st, v = ep.ed; u != v; v = father[v])
+        for (auto u = ep.st, v = ep.ed; u != v; v = father[v])  // 消除直径
             cnt += dis[v], ans.emplace_back(u, v);
         // return make_pair(cnt, ans); // make_pair 复制整个 vector 得到新的
     }
