@@ -19,18 +19,16 @@ inline int nextInt()
     return x * f;
 }
 
+const int N = 5005;
+int mat[N][N];
+
 inline longs gcd(longs a, longs b)
 {
     if (a < b) gcd(b, a);
-    if (!b) return a;
-    else return gcd(b, a % b);
+    if (mat[a][b]) return mat[a][b];
+    if (!b) return mat[a][b] = a;
+    else return mat[a][b] = gcd(b, a % b);
 }
-
-inline longs lcm(longs a, longs b)
-{ return a * b / gcd(a, b); }
-
-const int N = 5050;
-int mat[N][N];
 
 namespace STtable2D_simple
 {
@@ -104,7 +102,10 @@ int main()
     cin >> n >> m >> k;
     for (int i = 1; i <= n; ++ i)
         for (int j = 1; j <= m; ++ j)
-            mat[i][j] = lcm(i, j);
+            gcd(i, j);
+    for (int i = 1; i <= n; ++ i)
+        for (int j = 1; j <= m; ++ j)
+            mat[i][j] = i * j / mat[i][j];
     auto xx = STtable2D_simple::solve(n, m, k);
     cout << xx << endl;
 
