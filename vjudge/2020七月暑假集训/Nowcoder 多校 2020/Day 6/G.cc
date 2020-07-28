@@ -1,6 +1,9 @@
 /**
  *
  * 太怪了，为什么 WA
+ *
+ * 啊这，n 可能为 1，不是吧阿 sir ==
+ * n = 1 的时候单边同色必然不成（
  */
 #include <iostream>
 #include <cstdio>
@@ -35,7 +38,7 @@ int main()
     {
         cin >> n >> k;
         const auto all = 2 * n * (n + 1);
-        if (all % k || k == 1) {cout << -1 << endl; continue;}
+        if (all % k || k == 1 || n == 1) {cout << -1 << endl; continue;}
         int cnt = 0, dir = 0, xx = 2 * n + 1;
         int rows = 0, cols = 0;
         while (cnt < all)
