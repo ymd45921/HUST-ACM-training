@@ -1,5 +1,5 @@
 /**
- * n > 0
+ *
  */
 #include <iostream>
 #include <cstdio>
@@ -19,28 +19,26 @@ inline int nextInt()
     return f ? -x : x;
 }
 
+const int N = 205;
+
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
 
-    longs t, l, r, m;
-    cin >> t;
-    while (t --)
+    int n; string s;
+    cin >> n;
+    while (n --)
     {
-        cin >> l >> r >> m;
-        auto del = r - l;
-        for (int a = l; a <= r; ++ a)
-        {
-            auto pos = m % a, neg = (m / a + 1) * a - m;
-            longs b, c;
-            if (m / a > 0 && pos <= del) b = l + pos, c = l;
-            else if (neg <= del) b = l, c = l + neg;
-            else continue;
-            cout << a << ' ' << b << ' ' << c << endl;
-            break;
-        }
+        
+    }
+
+    for (auto ch = 'A'; ch <= 'Z'; ++ ch)
+    {
+        cout << ch << ": ";
+
+        cout << endl;
     }
 
     return 0;

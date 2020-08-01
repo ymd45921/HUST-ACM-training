@@ -1,11 +1,12 @@
 /**
- * n > 0
+ *
  */
 #include <iostream>
 #include <cstdio>
 #include <cctype>
 #include <algorithm>
 #include <cstring>
+#include <vector>
 
 using namespace std;
 using longs = long long;
@@ -19,28 +20,27 @@ inline int nextInt()
     return f ? -x : x;
 }
 
+constexpr int M = 1e5 + 5;
+vector<pair<int, int>> item;
+
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
 
-    longs t, l, r, m;
+    int t, n, m, a, b;
     cin >> t;
     while (t --)
     {
-        cin >> l >> r >> m;
-        auto del = r - l;
-        for (int a = l; a <= r; ++ a)
+        cin >> n >> m;
+        item.clear();
+        while (m --)
         {
-            auto pos = m % a, neg = (m / a + 1) * a - m;
-            longs b, c;
-            if (m / a > 0 && pos <= del) b = l + pos, c = l;
-            else if (neg <= del) b = l, c = l + neg;
-            else continue;
-            cout << a << ' ' << b << ' ' << c << endl;
-            break;
+            cin >> a >> b;
+            item.emplace_back(a, b);
         }
+
     }
 
     return 0;
