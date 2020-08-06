@@ -13,10 +13,10 @@ using uint = unsigned;
 
 inline int nextInt()
 {
-    int x = 0, f = 1, ch = getchar();
-    while (!isdigit(ch)) if (ch == '-') f = -1, ch = getchar();
+    int x = 0, f = 0, ch = getchar();
+    while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
     while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
-    return x * f;
+    return f ? -x : x;
 }
 
 int main()
