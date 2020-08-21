@@ -8,7 +8,6 @@
 #include <cstdio>
 #include <cctype>
 #include <algorithm>
-#include <cstring>
 #include <vector>
 #include <stack>
 #include <functional>
@@ -32,8 +31,7 @@ inline int nextInt()
 
 namespace SimpleSplayTree
 {
-    using T = longs;
-//    template <class T>
+    template <class T>
     struct node
     {
         T key, est, sum;
@@ -49,13 +47,13 @@ namespace SimpleSplayTree
         }
     };
 
-//    template <class T>
+    template <class T>
     class tree
     {
         int root, cnt, mem;
         stack<int> pool;
 
-        using node_t = ::SimpleSplayTree::node;
+        using node_t = ::SimpleSplayTree::node<T>;
         using method_t = function<void(node_t&)>;
         vector<node_t> node;
 
@@ -67,7 +65,6 @@ namespace SimpleSplayTree
         {
             int id = pool.empty() ? ++ cnt : pool.top();
             if (!pool.empty()) pool.pop();
-//            if (id >= 2e5 + 5) LOG("%d\n", id);
             node[id].init(key, father);
             return id;
         }
@@ -151,11 +148,11 @@ namespace SimpleSplayTree
             return id;
         }
 
-        void toStream(ostream &os, int id)
+        void toStream(ostream& os, int id)
         {
             int ls = lc(id), rs = rc(id);
             if (ls) os << "{", toStream(os, ls), os << "}";
-            os << " (" << node[id].key << ": " << node[id].key << ") ";
+            os << " (#" <<id << ": " << node[id].key << ") ";
             if (rs) os << "{", toStream(os, rs), os << "}";
         }
 
@@ -368,22 +365,16 @@ namespace SimpleSplayTree
             int r = atRank(x), r1 = getNext(r);
             splay(r1);
             int l = askLeft(y);
-//            WATCH(l), WATCH(r), END_LINE;
             if (!l) return 0;
             else splay(l, r1);
             int id = rc(lc(root));
             longs size = node[id].size, sum = node[id].sum;
             int l1 = getNext(l);
-//            cerr << *this << endl;
             node[l].key += node[l1].key - y + 1;
-//            cerr << *this << endl;
             remove(l1);
-//            cerr << *this << endl;
             int ins = getLast(r1);
             rc(ins) = alloc(y - 1, ins);
-//            cerr << *this << endl;
             update(ins), splay(ins);
-//            cerr << *this << endl;
             return sum - size * (y - 1);
         }
 #endif
@@ -399,18 +390,14 @@ int main()
 {
     ios::sync_with_stdio(false);
 
-//    freopen(R"(C:\Users\shiroha\Desktop\G\G.in)", "r", stdin);
-//    freopen("out.txt", "w", stdout);
-
     int t = nextInt();
-    SimpleSplayTree::tree tbl(N);
+    SimpleSplayTree::tree<longs> tbl(N);
     vector<longs> vec;
     auto toLog = [&]()
     {
         tbl.toArray(vec);
         for (auto ii : vec) LOG("%lld ", ii);
-        LOG("\n");
-        fflush(stderr);
+        END_LINE;
     };
     while (t --)
     {
@@ -418,21 +405,16 @@ int main()
         tbl.clear();
         while (n --) tbl.append(nextInt());
         tbl.append(0);
-//        LOG("%d\n", tbl.getSize());
-//        toLog();
         while (q --)
         {
             int op = nextInt();
             if (op == 1)
             {
                 int x = nextInt(), y = nextInt();
-//                LOG("%lld %lld", tbl[x], tbl[x + 1]), END_LINE;
-                if (tbl[x] < y) puts("0");
+                if (tbl[x] < y) puts("0");          // tbl[x + 1] >= y ??
                 else printf("%lld\n", tbl.pushLeft(x, y));
-//                fflush(stdout);
             }
             else printf("%lld\n", tbl[nextInt()]);
-//            toLog();
         }
         tbl.toArray(vec);
         n = (int) vec.size() - 1;
