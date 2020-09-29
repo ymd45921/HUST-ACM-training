@@ -1,6 +1,6 @@
 /**
  *
- *
+ * ++ -- 又不分，真不愧是你
  */
 #include <iostream>
 #include <cstdio>
@@ -15,8 +15,6 @@ using uint = unsigned;
 #define nextInt nexT<int>
 #define nextLongs nexT<longs>
 #define next128 nexT<__int128>
-#define eprintf(x) fprintf(stderr, x)
-#define var(x) ""#x" = " << x 
 
 template<class T>
 inline T nexT()
@@ -44,12 +42,29 @@ namespace In
     {return read(x), read(y...);}
 }
 
+#define ask(l, r) (cout << "? " << l << ' ' << r << endl), cin
+
+int sum1[1060];
+
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
 
+    int n, sum23;
+    cin >> n;
+    ask(2, 3) >> sum23;
+    for (int i = 2; i <= n; ++ i)
+        ask(1, i) >> sum1[i];
+    for (int i = n; i > 2; -- i)
+        sum1[i] -= sum1[i - 1];
+    sum1[1] = sum1[2] - (sum23 - sum1[3]);
+    sum1[2] = sum23 - sum1[3];
+    cout << "! ";
+    for (int i = 1; i < n; ++ i)
+        cout << sum1[i] << ' ';
+    cout << sum1[n] << endl;
 
     return 0;
 }

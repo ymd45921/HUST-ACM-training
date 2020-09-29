@@ -343,3 +343,7 @@ healthchecksdb
 *.exe
 */.vscode/*
 .vscode
+build/
+build/*
+*/build
+*/build/*
