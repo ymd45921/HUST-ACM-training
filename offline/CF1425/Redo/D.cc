@@ -2,8 +2,11 @@
  *
  * 并不算是很难的题目，但是要有耐心划分
  * 说起谁能杀我，还真的不能直接统计
- * 
+ *
  * 写代码存在问题：换一种写法总会有历史遗留问题
+ *
+ * 好家伙，你取模呢（
+ * 死因： 2e3 活活看成 1e3，bksn ==
  */
 #include <iostream>
 #include <cstdio>
@@ -21,7 +24,7 @@ using uint = unsigned;
 #define nextLongs nexT<longs>
 #define next128 nexT<__int128>
 #define eprintf(x) fprintf(stderr, x)
-#define var(x) ""#x" = " << x 
+#define var(x) ""#x" = " << x
 
 template<class T>
 inline T nexT()
@@ -49,13 +52,10 @@ namespace In
     {return read(x), read(y...);}
 }
 
-const int N = 1050, mod = 1e9 + 7;
+const int N = 2060, mod = 1e9 + 7;
 struct snake {int x, y, b;} p[N];
 bitset<N> g[N];
-int w[N][N], x[N];
-
-int dis(int i, int j)
-{return max(abs(p[i].x - p[j].x), abs(p[i].y - p[j].y));}
+int pre[N][N];
 
 namespace FastC
 {
@@ -63,14 +63,14 @@ namespace FastC
     const int N = ::N * 2;
     longs fact[N], inv[N];
 
-    longs fastPow(longs a, longs b)
+    longs fastPow(longs a, uint b)
     {
         longs ans = 1;
         while (b)
         {
-            if (b & 1) ans = (ans * a) % mod;
+            if (b & 1u) ans = (ans * a) % mod;
             a = (a * a) % mod;
-            b >>= 1;
+            b >>= 1u;
         }
         return ans % mod;
     }
@@ -98,10 +98,23 @@ int getW(int x1, int y1, int x2, int y2)
     y1 = max(y1, 1), y2 = min(1000, y2);
     if (x1 > x2 || y1 > y2) return 0;
     -- x1, -- y1;
-    return w[x2][y2] + w[x1][y1] - w[x1][y2] - w[x2][y1];
+    return pre[x2][y2] + pre[x1][y1] - pre[x1][y2] - pre[x2][y1];
 }
 
-#define square(x, y) (x - r), (y - r), (x + r), (y + r)  
+int getSquare(int i, int r)
+{
+    const auto x = p[i].x, y = p[i].y;
+    return getW(x - r, y - r, x + r, y + r);
+}
+
+int getInter(int i, int j, int r)
+{
+    int uu = max(p[i].x, p[j].x) - r,
+        dd = min(p[i].x, p[j].x) + r,
+        ll = max(p[i].y, p[j].y) - r,
+        rr = min(p[i].y, p[j].y) + r;
+    return getW(uu, ll, dd, rr);
+}
 
 int main()
 {
@@ -120,42 +133,36 @@ int main()
     }
     for (int i = 1; i < N; ++ i)
         for (int j = 1; j < N; ++ j)
-            w[i][j] += w[i - 1][j] + w[i][j - 1] - w[i - 1][j - 1] + g[i][j];
-    for (int i = 1; i <= n; ++ i)
-        x[i] = getW(square(p[i].x, p[i].y));        
+            pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1] + g[i][j];
 #if 0
     for (int i = 1; i <= 5; ++ i)
     {
         for (int j = 1; j <= 5; ++ j)
-            printf("%c ", g[i][j] ? '*' : '.');   
-        puts("");    
+            printf("%c ", g[i][j] ? '*' : '.');
+        puts("");
     }
     for (int i = 1; i <= 5; ++ i)
     {
         for (int j = 1; j <= 5; ++ j)
-            printf("%d ", w[i][j]);  
-        puts("");    
+            printf("%d ", pre[i][j]);
+        puts("");
     }
     for (int i = 1; i <= n; ++ i)
         printf("%d ", x[i]);
-    puts("");    
-#endif            
-    longs ans = 0;        
+    puts("");
+#endif
+    longs ans = 0;
     for (int i = 1; i <= n; ++ i)
         for (int j = i; j <= n; ++ j)
         {
-            int uu = max(p[i].x, p[j].x) - r,
-                dd = min(p[i].x, p[j].x) + r,
-                ll = max(p[i].y, p[j].y) - r,
-                rr = min(p[i].y, p[j].y) + r;
-            auto ww = getW(uu, ll, dd, rr), nn = n - ww;
-            longs cnt = $C(n, m) - $C(n - ww, m);
-            auto u = x[i] - ww, v = x[j] - ww;
+            auto w = getInter(i, j, r), nn = n - w;
+            longs cnt = $C(n, m) - $C(n - w, m);
+            auto u = getSquare(i, r) - w, v = getSquare(j, r) - w;
             cnt += $C(nn, m) - $C(nn - u, m) - $C(nn - v, m) + $C(nn - v - u, m);
             while (cnt < 0) cnt += mod;
             cnt = cnt * (i == j ? 1 : 2) % mod;
-            ans = (ans + cnt * p[i].b % mod * p[j].b % mod);
-        }        
+            ans = (ans + cnt * p[i].b % mod * p[j].b % mod) % mod;
+        }
     printf("%lld\n", ans);
 
     return 0;
