@@ -2,15 +2,13 @@
  *
  *
  */
-#include <iostream>
-#include <cstdio>
-#include <cctype>
-#include <algorithm>
-#include <cstring>
+#include <bits/stdc++.h>
 
 using namespace std;
 using longs = long long;
 using uint = unsigned;
+using ulongs = unsigned long long;
+using longd = long double;
 using lll = __int128;
 
 #define nextInt nexT<int>
