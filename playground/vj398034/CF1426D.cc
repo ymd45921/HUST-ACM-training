@@ -1,6 +1,6 @@
 /**
  *
- *
+ * 原以为还要求交集什么的，但是发现直接扫一遍贪心就行了
  */
 #include <bits/stdc++.h>
 
@@ -43,6 +43,9 @@ namespace In
     {return read(x), read(y...);}
 }
 
+const int N = 2e5 + 5;
+int a[N]; longs sum[N];
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -51,9 +54,26 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    using In::read;
-    
 
+    int n = nextInt();
+    for (int i = 1; i <= n; ++ i)
+        sum[i] = (a[i] = nextInt()) + sum[i - 1];
+    set<longs> s;
+    s.insert(0);
+    int ans = 0;
+    longs pre = 0;
+    for (int i = 1; i <= n; ++ i)
+    {
+        if (s.count(sum[i] - pre))  
+        {
+            s.clear();
+            pre = sum[i - 1];
+            ++ ans;
+            s.insert(0);
+        }
+        s.insert(sum[i] - pre);
+    }
+    printf("%d\n", ans);
     return 0;
 }
 

@@ -48,12 +48,22 @@ int main()
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
-#if 0
-    freopen("in.txt", "r", stdin);
-#endif
-    using In::read;
-    
 
+    int t = nextInt();
+    while (t --)
+    {
+        int n = nextInt(), m = nextInt();
+        bool ok = false;
+        while (n --)
+        {
+            int a = nextInt(), b = nextInt(),
+                c = nextInt(), d = nextInt();
+            if (b == c) ok = true;    
+        }
+        if (m % 2) puts("NO");
+        else puts(ok ? "YES" : "NO");
+    }
+    
     return 0;
 }
 

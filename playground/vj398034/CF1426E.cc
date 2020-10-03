@@ -51,8 +51,12 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    using In::read;
-    
+
+    int n, a1, a2, a3, b1, b2, b3;
+    cin >> n >> a1 >> a2 >> a3 >> b1 >> b2 >> b3;
+    int ans1 = n - (min(b1, a2 + a1) + min(b2, a3 + a2) + min(b3, a1 + a3));
+    int ans2 = min(a1, b2) + min(a2, b3) + min(a3, b1);
+    cout << ans1 << ' ' << ans2 << endl;
 
     return 0;
 }

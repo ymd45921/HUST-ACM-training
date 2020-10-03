@@ -51,8 +51,16 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    using In::read;
-    
+    int t, n;
+    cin >> t;
+    while (t --)
+    {
+        cin >> n;
+        int ans = n, sq = sqrt(n);
+        for (int i = 1; i <= sq; ++ i)
+           ans = min(ans, i - 2 + (n + i - 1) / i);
+        cout << ans << endl;   
+    }
 
     return 0;
 }

@@ -9,13 +9,13 @@ using longs = long long;
 using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
+using lll = __int128_t;
 
 #define nextInt nexT<int>
 #define nextLongs nexT<longs>
 #define next128 nexT<__int128>
 #define eprintf(x...) fprintf(stderr, x...)
 #define var(x) ""#x" = " << x 
-#define lll __int128
 
 template<class T>
 inline T nexT()
@@ -48,11 +48,15 @@ int main()
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
-#if 0
-    freopen("in.txt", "r", stdin);
-#endif
-    using In::read;
-    
+
+    int t = nextInt();
+    while (t --)
+    {
+        int n = nextInt(), x = nextInt();
+        if (n <= 2) {puts("1"); continue;}
+        n = n - 3;
+        printf("%d\n", n / x + 2);
+    }
 
     return 0;
 }
