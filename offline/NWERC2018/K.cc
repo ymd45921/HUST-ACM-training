@@ -8,21 +8,9 @@ using namespace std;
 using longs = long long;
 using uint = unsigned;
 
-#define nextInt nexT<int>
-#define nextLongs nexT<longs>
-#define next128 nexT<__int128>
 #define eprintf(x...) fprintf(stderr, x...)
 #define var(x) ""#x" = " << x 
 #define eflush() fflush(stderr)
-
-template<class T>
-inline T nexT()
-{
-    T x = 0; int f = 0, ch = getchar();
-    while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
-    while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
-    return f ? -x : x;
-}
 
 namespace In
 {
@@ -40,6 +28,7 @@ namespace In
     inline void read(T &x, Ts &... y)
     {return read(x), read(y...);}
 }
+using In::read;
 
 int main()
 {
@@ -47,7 +36,18 @@ int main()
     std::cin.tie(nullptr);
     std::cout.tie(nullptr);
 
-
+    int n, m;
+    string key, b;
+    cin >> n >> m >> key >> b;
+    string a = b;
+    int siz = a.length();
+    for (int i = siz - n, j = 0; j < n; ++ i, ++ j)
+        a[i] = key[j];
+    while (-- siz >= n)
+    {
+        a[siz - n] = (b[siz] - a[siz] + 260) % 26 + 'a';
+    }
+    cout << a << endl;
     return 0;
 }
 

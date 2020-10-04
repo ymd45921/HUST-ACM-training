@@ -8,21 +8,9 @@ using namespace std;
 using longs = long long;
 using uint = unsigned;
 
-#define nextInt nexT<int>
-#define nextLongs nexT<longs>
-#define next128 nexT<__int128>
 #define eprintf(x...) fprintf(stderr, x...)
 #define var(x) ""#x" = " << x 
 #define eflush() fflush(stderr)
-
-template<class T>
-inline T nexT()
-{
-    T x = 0; int f = 0, ch = getchar();
-    while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
-    while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
-    return f ? -x : x;
-}
 
 namespace In
 {
@@ -40,14 +28,29 @@ namespace In
     inline void read(T &x, Ts &... y)
     {return read(x), read(y...);}
 }
+using In::read;
+
+const int N = 2e5 + 5;
+int c[N];
 
 int main()
 {
-    ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
-    std::cout.tie(nullptr);
+    // ios::sync_with_stdio(false);
+    // std::cin.tie(nullptr);
+    // std::cout.tie(nullptr);
 
-
+    int n; read(n);
+    for (int i = 1; i <= n; ++ i)
+        read(c[i]);
+    sort(c + 1, c + 1 + n);
+    bool ok = true;
+    double f = 1;
+    for (int i = 1; i <= n; ++ i)
+        if (c[i] > i) ok = false;    
+        else f = min(f, (double)c[i] / i);
+    cout << fixed;    
+    if (ok) cout << f << endl;
+    else puts("-1");    
     return 0;
 }
 
