@@ -32,7 +32,7 @@ namespace In
     inline void read(T &x)
     {
         x = 0;
-        int ch = getchar(), f = 1;
+        int ch = getchar(), f = 0;
         while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         x = f ? -x : x;
