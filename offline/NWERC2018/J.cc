@@ -42,8 +42,10 @@ int main()
     int n; read(n);
     for (int i = 1; i <= n; ++ i)
         read(p[i]);
-        
-
+    sort(p + 1, p + 1 + n);
+    auto me = p[n], a1 = p[n - 1], a2 = p[n - 2];    
+    longs ans = a1 - a2 + 2 * (me - a1);
+    printf("%lld\n", ans);
     return 0;
 }
 

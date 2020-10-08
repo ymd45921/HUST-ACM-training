@@ -347,3 +347,8 @@ build/
 build/*
 */build
 */build/*
+in.txt
+out.txt
+*.in
+*.out
+*.class
