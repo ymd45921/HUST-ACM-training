@@ -10,38 +10,34 @@ using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
 
-#define nextInt nexT<int>
-#define nextLongs nexT<longs>
-#define next128 nexT<__int128>
 #define eprintf(x...) fprintf(stderr, x...)
 #define var(x) ""#x" = " << x 
 #define lll __int128
 
-template<class T>
-inline T nexT()
+static class Scanner 
 {
-    T x = 0; int f = 0, ch = getchar();
-    while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
-    while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
-    return f ? -x : x;
-}
-
-namespace In
-{
-    template <class T>
-    inline void read(T &x)
+    template<class T>
+    inline T read()
     {
-        x = 0;
-        int ch = getchar(), f = 0;
+        T x = 0; int f = 0, ch = getchar();
         while (!isdigit(ch)) ch == '-' && (f = !f), ch = getchar();
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
-        x = f ? -x : x;
+        return f ? -x : x;
     }
 
+public:
+
+    template <class T>
+    void operator()(T &x){x = read<T>();}
+
     template <class T, class... Ts>
-    inline void read(T &x, Ts &... y)
-    {return read(x), read(y...);}
-}
+    void operator()(T &x, Ts &... y)
+    {x = read<T>(), (*this)(y...);}
+
+    int nextInt() {return read<int>();}
+    longs nextLongs() {return read<longs>();}  
+    lll nextInt128() {return read<lll>();}    
+} scanner;
 
 int main()
 {
@@ -51,8 +47,7 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    using In::read;
-    
+
 
     return 0;
 }

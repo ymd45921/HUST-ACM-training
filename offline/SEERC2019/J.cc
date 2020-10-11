@@ -1,6 +1,11 @@
 /**
  *
  * 读了个假题，吐了（
+ * 
+ * 题目的意思是：给你一个完全图，使得每条边都在一个环内且价值和最小
+ * - 因为点数一定是奇数，所以每个节点的度数都是偶数，所以每个边本来就属于环
+ * - 因此所有的边都有用，所以根本就没有必要进行选择，本质是计算贡献
+ * - 
  */
 #include <bits/stdc++.h>
 
@@ -50,7 +55,7 @@ int main()
     using In::read;
 
     int n, u, v, w, m;
-    read(n), m = n * (n - 1);
+    read(n), m = n * (n - 1) / 2;
     while (m --)
     {
         read(u, v, w);
@@ -61,7 +66,8 @@ int main()
     {
         sort(g[i].begin(), g[i].end());
         auto siz = g[i].size();
-        for (int j = 1; j < siz; ++ j)
+        assert(siz % 2 == 0);
+        for (int j = 1; j < siz; j += 2)
             ans += max(g[i][j], g[i][j - 1]);
     }
     printf("%lld\n", ans);
