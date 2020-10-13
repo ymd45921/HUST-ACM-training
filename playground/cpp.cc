@@ -14,6 +14,13 @@ using longd = long double;
 #define var(x) ""#x" = " << x 
 #define lll __int128
 
+template <class T>
+void println(const T x)
+{puts(to_string(x).c_str());}
+void println(const char *s){puts(s);}
+void println(const char ch)
+{putchar(ch), putchar('\n');}
+
 static class Scanner 
 {
     template<class T>
@@ -32,11 +39,15 @@ public:
 
     template <class T, class... Ts>
     void operator()(T &x, Ts &... y)
-    {x = read<T>(), (*this)(y...);}
+    {(*this)(x), (*this)(y...);}
+
+    void operator()(char *x){scanf("%s", x);}
+    void operator()(char &x){x = getchar();}
 
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}  
-    lll nextInt128() {return read<lll>();}    
+    lll nextInt128() {return read<lll>();}
+    char nextChar() {return getchar();}    
 } scanner;
 
 int main()
@@ -47,7 +58,7 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    
 
     return 0;
 }
