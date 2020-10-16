@@ -84,8 +84,7 @@ int main()
     {
         cin >> a[i].name >> x;
         sum += a[i].value = x;
-        a[i].ll = x - 0.50;
-        a[i].rr = x + 0.49;
+        a[i].ll = a[i].rr = x;
     }
     bool solved = true;
     if (sum < 100)

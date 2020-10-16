@@ -13,6 +13,8 @@ using longd = long double;
 #define eprintf(x...) fprintf(stderr, x...)
 #define var(x) ""#x" = " << x 
 #define lll __int128
+#define minimize(a, b) (a = min(a, b))
+#define maximize(a, b) (a = max(a, b))
 
 template <class T>
 void println(const T x)
