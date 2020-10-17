@@ -16,21 +16,12 @@ using longd = long double;
 #define minimize(a, b) (a = min(a, b))
 #define maximize(a, b) (a = max(a, b))
 
-void print(__int128 x)
-{
-    if (x < 0) { putchar('-'); x = -x; }
-    static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
-    while (cnt --) putchar(str[cnt]);
-}
 template <class T>
-void println(T x) {puts(to_string(x).c_str());}
-void println(const char *s) {puts(s);}
+void println(const T x)
+{puts(to_string(x).c_str());}
+void println(const char *s){puts(s);}
 void println(const char ch)
 {putchar(ch), putchar('\n');}
-void println(const lll x)
-{lll xx = x; print(xx), putchar('\n');}
 
 static class Scanner
 {
@@ -69,7 +60,15 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    int t = scanner.nextInt();
+    while (t --)
+    {
+        longs x1, y1, x2, y2;
+        scanner(x1, y1, x2, y2);
+        longs ans = abs(x2 - x1) + abs(y2 - y1);
+        if (abs(x2 - x1) && abs(y2 - y1)) ans += 2;
+        println(ans);
+    }
 
     return 0;
 }

@@ -1,6 +1,6 @@
 /**
  *
- *
+ * 傻了，贪心贪不动啊（
  */
 #include <bits/stdc++.h>
 
@@ -25,8 +25,9 @@ void print(__int128 x)
     while (cnt --) putchar(str[cnt]);
 }
 template <class T>
-void println(T x) {puts(to_string(x).c_str());}
-void println(const char *s) {puts(s);}
+void println(T x)
+{puts(to_string(x).c_str());}
+void println(const char *s){puts(s);}
 void println(const char ch)
 {putchar(ch), putchar('\n');}
 void println(const lll x)
@@ -61,6 +62,22 @@ public:
     char nextChar() {return getchar();}
 } scanner;
 
+const int N = 1e5 + 5;
+
+lll simulate(lll len, lll tim)
+{
+    lll aa = len / tim, cb = len % tim;
+    lll bb = aa + bool(cb), ca = tim - cb;
+    return aa * aa * ca + bb * bb * cb;
+}
+
+bool better(lll now, lll then, lll sp)
+{
+    lll ans1 = simulate(now, sp) + simulate(then, 1);
+    lll ans2 = then * then + simulate(now, sp + 1);
+    return ans1 < ans2;
+}
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -69,7 +86,40 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    priority_queue<lll> s;
+    int n, k, x;
+    scanner(n, k);
+    for (int i = 1; i <= n; ++ i)
+        scanner(x), s.push(x);
+    assert(s.size() == n);
+    lll t = k - n;
+//    while (t --)
+//    {
+//        auto xx = s.top(); s.pop();
+//        auto aa = xx / 2, bb = xx - aa;
+//        s.push(aa), s.push(bb);
+//    }
+    while (t)
+    {
+        auto xx = s.top(); s.pop();
+        auto then = s.top();
+        lll aa, bb, ca, cb, sp = 1;
+        do
+        {
+            ++ sp, aa = xx / sp, cb = xx % sp;
+            bb = aa + bool(cb), ca = sp - cb;
+        } while (better(xx, then, sp) && sp <= t);
+        t -= sp - 1;
+        while (cb --) s.push(bb);
+        while (ca --) s.push(aa);
+    }
+    assert(s.size() == k);
+    lll ans = 0;
+    while (!s.empty())
+    {
+        auto ii = s.top(); s.pop();
+        ans += ii * ii;
+    } println(ans);
 
     return 0;
 }

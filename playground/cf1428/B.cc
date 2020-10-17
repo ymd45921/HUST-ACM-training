@@ -16,21 +16,12 @@ using longd = long double;
 #define minimize(a, b) (a = min(a, b))
 #define maximize(a, b) (a = max(a, b))
 
-void print(__int128 x)
-{
-    if (x < 0) { putchar('-'); x = -x; }
-    static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
-    while (cnt --) putchar(str[cnt]);
-}
 template <class T>
-void println(T x) {puts(to_string(x).c_str());}
-void println(const char *s) {puts(s);}
+void println(const T x)
+{puts(to_string(x).c_str());}
+void println(const char *s){puts(s);}
 void println(const char ch)
 {putchar(ch), putchar('\n');}
-void println(const lll x)
-{lll xx = x; print(xx), putchar('\n');}
 
 static class Scanner
 {
@@ -61,6 +52,10 @@ public:
     char nextChar() {return getchar();}
 } scanner;
 
+const int N = 3e5 + 5;
+#define lst ((i + n - 1) % n)
+#define nxt (i)
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -69,6 +64,22 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
+    int t, n;
+    string s;
+    cin >> t;
+    while (t --)
+    {
+        cin >> n >> s;
+        int ans = 0, bad = 0;
+        for (int i = 0; i < n; ++ i)
+        {
+//            cerr << s[lst] << ' ' << s[nxt] << endl;
+            if (s[lst] == '-' || s[nxt] == '-') ++ ans;
+            else if (s[lst] != s[nxt] && s[lst] != '-' && s[nxt] != '-') ++ bad;
+        }
+        if (!bad) cout << n << endl;
+        else cout << ans << endl;
+    }
 
 
     return 0;

@@ -16,21 +16,12 @@ using longd = long double;
 #define minimize(a, b) (a = min(a, b))
 #define maximize(a, b) (a = max(a, b))
 
-void print(__int128 x)
-{
-    if (x < 0) { putchar('-'); x = -x; }
-    static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
-    while (cnt --) putchar(str[cnt]);
-}
 template <class T>
-void println(T x) {puts(to_string(x).c_str());}
-void println(const char *s) {puts(s);}
+void println(const T x)
+{puts(to_string(x).c_str());}
+void println(const char *s){puts(s);}
 void println(const char ch)
 {putchar(ch), putchar('\n');}
-void println(const lll x)
-{lll xx = x; print(xx), putchar('\n');}
 
 static class Scanner
 {
@@ -60,6 +51,10 @@ public:
     lll nextInt128() {return read<lll>();}
     char nextChar() {return getchar();}
 } scanner;
+#define isA(i) (s[i] == 'A')
+
+const int N = 2e5 + 5;
+int dp[N];
 
 int main()
 {
@@ -70,6 +65,23 @@ int main()
     freopen("in.txt", "r", stdin);
 #endif
 
+    int t, n, l; string s;
+    cin >> t;
+    while (t --)
+    {
+        cin >> s;
+        n = s.length();
+        int cntA = 0, cntB = 0;
+        for (int i = 0; i < n; ++ i)
+            ++ (isA(i) ? cntA : cntB);
+        dp[0] = isA(0);
+        for (int i = 1; i < n; ++ i)
+            dp[i] = max(0, dp[i - 1] + (isA(i) ? 1 : -1));
+        dp[n] = dp[n - 1];
+        auto use = cntA - dp[n], lastB = cntB - use;
+        auto ans = dp[n] + (lastB % 2);
+        println(ans);
+    }
 
     return 0;
 }
