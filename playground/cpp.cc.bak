@@ -10,7 +10,7 @@ using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
 
-#define eprintf(x...) fprintf(stderr, x...)
+#define eprintf(x...) fprintf(stderr, x)
 #define var(x) ""#x" = " << x 
 #define lll __int128
 
