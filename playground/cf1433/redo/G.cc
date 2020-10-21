@@ -4,7 +4,10 @@
  * 因为 dijkstra 算法复杂度是 #E·log(#V)
  * 所以稀疏图中，n 遍 dij 比 floyd 快
  * 
- * WA: 
+ * WA: wdnmd，按照 2 步长遍历 ee 不太行
+ * 
+ * 重写的多参数 min 可以使用 min({}) 代替
+ * 可以使用已经有的新语法 auto [] = {}
  */
 #include <bits/stdc++.h>
 
@@ -129,7 +132,7 @@ namespace ShortestPath
     template <class _n_Array>
     void dijkstra(int st, _n_Array dis)
     {
-        for (int i = 1; i <= n; ++ i) dis[i] = inf;
+        for (int i = 0; i <= n; ++ i) dis[i] = inf;
         bitset<N> vis; heap_t heap;
         dis[st] = 0, heap.push({0, st});
         while (!heap.empty())
@@ -195,13 +198,14 @@ int main()
     FWS::init(n);
     using FWS::addEdge;
     int mm = m;
-    vector<pair<int, int>> task;
+    vector<pair<int, int>> task, list;
     while (mm --)
     {
         int u, v, w;
         scanner(u, v, w);
         addEdge(u, v, w);
         addEdge(v, u, w);
+        list.emplace_back(u, v);
     }
     while (k --) task.emplace_back
     (scanner.nextInt(), scanner.nextInt());
@@ -213,10 +217,8 @@ int main()
     for (auto &ii : task)
         assert(dis[ii.first][ii.second] == dis[ii.second][ii.first]);
 #endif
-    for (int i = 0; i < n; ++ i)
+    for (auto [uu, vv] : list)
     {
-        auto &ee = FWS::ee[i * 2];
-        auto uu = ee.u, vv = ee.v;
         int tmp = 0;
         for (auto &ii : task)
             tmp += min(dis[ii.first][ii.second],
