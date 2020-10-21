@@ -1,7 +1,7 @@
 /**
  *
- * WA: 初始化傻傻分不清楚，n 不是什么东西啊哥（
- * WA: 溢出了？？？确实 1e12 直接炸了
+ * 中 庸 之 道
+ * 虽然感觉挺离谱的，但是似乎确实这么回事
  */
 #include <bits/stdc++.h>
 
@@ -56,8 +56,7 @@ public:
 const int N = 1e6 + 5;
 const int inf = 0x3f3f3f3f;
 int high[N], low[N];
-set<int> key[N];
-bitset<N> ex;
+vector<int> use, xx;
 
 int main()
 {
@@ -76,38 +75,30 @@ int main()
         scanner(x, y);
         maximize(high[x], y);
         minimize(low[x], y);
-        ex[x] = true;
     }
-    longs solid = w - 1, tmp = 0;
     for (int i = 0; i < w; ++ i)
-        if (ex[i]) 
-            key[high[i]].insert(i), 
-            key[low[i]].insert(i),
-            solid += 2 * (high[i] - low[i]);
-    int over = 0, at = 0, below = 0;        
-    for (int i = 0; i < w; ++ i)
-        if (ex[i])
-            if (low[i])
-            {
-                tmp += 2 * low[i];
-                ++ over;
-            } else if (high[i] == 0) ++ below;
-            else ++ at;
-    assert(ex.count() == over + at + below);        
-    longs ans = solid + tmp;
-    for (int i = 1; i < h; ++ i)
+        if (high[i] >= low[i]) use.push_back(i);
+    const auto count = [&](int y)
     {
-        tmp = tmp - 2 * over + 2 * below;
-        for (auto ii : key[i])
+        longs ret = 0;
+        for (auto x : use)
         {
-            if (high[ii] == low[ii]) 
-                ++ below, -- over;
-            else if (i == high[ii])
-                ++ below, -- at;
-            else ++ at, -- over;    
+            if (low[x] > y) ret += 2 * (low[x] - y);
+            if (high[x] < y) ret += 2 * (y - high[x]);
         }
-        minimize(ans, solid + tmp);
-    }
+        return ret;
+    };
+    longs solid = w - 1, tmp = 0;
+    for (int i : use)
+        solid += 2 * (high[i] - low[i]),
+        xx.push_back(high[i]),
+        xx.push_back(low[i]);
+    sort(xx.begin(), xx.end());
+    // for (auto ii : xx) eprintf("%d ", ii);
+    // eprintf("\n");
+    auto mi = xx.size() / 2;  
+    longs ans = min(count(xx[mi - 1]), count(xx[mi]));
+    ans += solid;    
     println(ans);            
 
     return 0;
