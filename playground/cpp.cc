@@ -42,6 +42,8 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
+    static bool isSeparator(int x)
+    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -53,12 +55,13 @@ public:
     {(*this)(x), (*this)(y...);}
 
     void operator()(char *x){scanf("%s", x);}
-    void operator()(char &x){x = getchar();}
+    void operator()(char &x){x = (char)getchar();}
 
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar() {return getchar();}
+    char nextChar()
+    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
 } scanner;
 
 int main()
