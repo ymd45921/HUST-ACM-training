@@ -1,6 +1,6 @@
 /**
  *
- *
+ * 样例暗示的不错，，不然我可能会漏情况（
  */
 #include <bits/stdc++.h>
 
@@ -62,7 +62,9 @@ public:
     lll nextInt128() {return read<lll>();}
     char nextChar()
     {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
-} scanner;
+} sc;
+
+using cmd = pair<char, int>;
 
 int main()
 {
@@ -72,8 +74,33 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
-
+    int n = sc.nextInt(), m = 2 * n;
+    vector<cmd> opt;
+    int cnt = 0; bool valid = true;
+    while (m --)
+    {
+        auto ch = sc.nextChar();
+        if (ch == '+') opt.emplace_back('+', 0), ++ cnt;
+        else opt.emplace_back('-', sc.nextInt()), -- cnt;
+        if (cnt < 0) valid = false;
+    }
+    if (!valid) puts("NO");
+    else
+    {
+        stack<int> tab, ans;
+        auto end = opt.rend();
+        for (auto ii = opt.rbegin(); ii != end; ++ ii)
+            if (ii->first == '-')
+                valid &= (tab.empty() || tab.top() >= ii->second),
+                tab.push(ii->second);
+            else ans.push(tab.top()), tab.pop();
+        if (valid)
+        {
+            puts("YES");
+            while (!ans.empty()) printf("%d ", ans.top()), ans.pop();
+            puts("");
+        } else puts("NO");
+    }
     return 0;
 }
 
