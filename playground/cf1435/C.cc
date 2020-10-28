@@ -1,6 +1,10 @@
 /**
  *
- *
+ * 好家伙，秦皇岛你会双指针这你就不会了？
+ * 甚至还不需要单调队列维护 RMQ ==
+ * 拒绝偷鸡摸狗（）
+ * 
+ * 草我好不会写双指针啊
  */
 #include <bits/stdc++.h>
 
@@ -15,6 +19,7 @@ using longd = long double;
 #define lll __int128
 #define minimize(a, b) (a = min(a, b))
 #define maximize(a, b) (a = max(a, b))
+#define let const auto
 
 void print(__int128 x)
 {
@@ -76,13 +81,27 @@ int main()
         a[i] = scanner.nextInt();
     int n = scanner.nextInt();
     while (n --) b.push_back(scanner.nextInt());
-    sort(a + 1, a + 7);
-    sort(b.begin(), b.end());
-#ifdef 偷鸡摸狗王中王中王中王
-    println(max(0, b.back() - b.front() - (a[6] - a[1])));
-    return 0;
-#endif
-
+    n = b.size();
+    unordered_map<int, int> cnt;
+    vector<pair<int, int> > arr;
+    for (int i = 1; i <= 6; ++ i)
+        for (int j = 0; j < n; ++ j)
+            arr.emplace_back(b[j] - a[i], j);
+    sort(arr.begin(), arr.end());
+    let nn = arr.size();
+    let inc = [&](int id){id = arr[id].second; ++ cnt[id];};
+    let dec = [&](int id){id = arr[id].second; if (!-- cnt[id]) cnt.erase(id);};
+    let calc = [&](int r, int l){return arr[r].first - arr[l].first;};
+    let kind = [&](){return cnt.size();};
+    int ans = 0x3f3f3f3f, cur = 0;
+//    for (auto ii : arr) cerr << "(" << ii.first << ", " << ii.second << ") ";
+    for (int lim = 0; lim < nn; ++ lim)
+    {
+        while (cur < nn && kind() < n) inc(cur ++);
+        if (kind() != n) break;
+        minimize(ans, calc(cur - 1, lim)); dec(lim);
+    }
+    println(ans);
     return 0;
 }
 
