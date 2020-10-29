@@ -79,8 +79,7 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int a = 2, b = 3;
-    watch(var(a) $$ var(b));
+
 
     return 0;
 }
