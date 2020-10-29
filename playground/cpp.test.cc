@@ -11,8 +11,8 @@ using ulongs = unsigned long long;
 using longd = long double;
 
 #define lll __int128
-#define minimize(a, b) (a = min(a, b))
-#define maximize(a, b) (a = max(a, b))
+#define minimize(a, b) ((a) = min(a, b))
+#define maximize(a, b) ((a) = max(a, b))
 #define sgn(x) ((x) < 0 ? -1 : (x) > 0)
 
 #if 1
@@ -30,8 +30,8 @@ void print(__int128 x)
 {
     if (x < 0) { putchar('-'); x = -x; }
     static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
+    while (x > 9) { str[cnt ++] = (x % 10) - 48; x /= 10;}
+    str[cnt ++] = x - 48;
     while (cnt --) putchar(str[cnt]);
 }
 template <class T>
