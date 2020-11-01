@@ -1,8 +1,6 @@
 /**
  *
- * ?…… 暴力wa了？
- * 
- * A, B is positive integers（（
+ *
  */
 #include <bits/stdc++.h>
 
@@ -73,6 +71,10 @@ public:
     char nextChar() {return static_cast<char>(getchar());}
 } scanner;
 
+const int N = 2e5 + 5, K = 500;
+const longs mod = 998244353;
+longs a[N][K], sum[K];
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -81,20 +83,18 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    unordered_map<lll, pair<int, int>> ans;
-    vector<lll> pow3, pow5;
-    pow3.push_back(1), pow5.push_back(1);
-    lll now = pow3.back(), lim = 1e18;
-    while ((now *= 3) <= lim) pow3.push_back(now);
-    now = pow5.back();
-    while ((now *= 5) <= lim) pow5.push_back(now);
-    auto siz3 = pow3.size(), siz5 = pow5.size();
-    for (int i = 1; i < siz3; ++ i)
-        for (int j = 1; j < siz5; ++ j)
-            ans[pow3[i] + pow5[j]] = {i, j};
-    lll n = scanner.nextInt128();
-    if (ans.count(n)) printf("%d %d\n", ans[n].first, ans[n].second);
-    else puts("-1");
+    int n, k;
+    scanner(n, k);
+    for (int i = 1; i <= n; ++ i)
+        scanner(a[i][1]);
+    for (int p = 2; p <= k; ++ p)
+        for (int i = 1; i <= n; ++ i)
+            a[i][p] = a[i][p - 1] * a[i][1] % mod;
+    for (int p = 1; p <= k; ++ p)
+        for (int i = 1; i <= n; ++ i)
+            sum[p] = (sum[p] + a[i][p]) % mod;
+
+
     return 0;
 }
 
