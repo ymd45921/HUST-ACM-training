@@ -14,6 +14,7 @@ using longd = long double;
 #define minimize(a, b) ((a) = min(a, b))
 #define maximize(a, b) ((a) = max(a, b))
 #define sgn(x) ((x) < 0 ? -1 : (x) > 0)
+#define puti(n) puts(to_string(n).c_str())
 
 #if 1
 #define eprintf(x...) fprintf(stderr, x)
@@ -26,21 +27,20 @@ using longd = long double;
 #define watch(...)
 #endif
 
-void print(__int128 x)
+template <class T>
+void print(T x)
 {
     if (x < 0) { putchar('-'); x = -x; }
     static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) - 48; x /= 10;}
-    str[cnt ++] = x - 48;
+    while (x > 9) { str[cnt ++] = (x % 10) + 48; x /= 10;}
+    str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
+void print(char *s) {printf(s);}
+void print(char ch) {putchar(ch);}
 template <class T>
-void println(T x) {puts(to_string(x).c_str());}
-void println(const char *s) {puts(s);}
-void println(const char ch)
-{putchar(ch), putchar('\n');}
-void println(const lll x)
-{lll xx = x; print(xx), putchar('\n');}
+void println(T x)
+{print(x), putchar('\n');}
 
 static class Scanner
 {
@@ -53,6 +53,8 @@ static class Scanner
         return f ? -x : x;
     }
 
+    static inline bool isBlank(int x)
+    {return x == ' ' || x == '\n';}
 public:
 
     template <class T>
@@ -63,12 +65,12 @@ public:
     {(*this)(x), (*this)(y...);}
 
     void operator()(char *x){scanf("%s", x);}
-    void operator()(char &x){x = (char)getchar();}
+    void operator()(char &x){do x = (char)getchar(); while (isBlank(x));}
 
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar() {return static_cast<char>(getchar());}
+    char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
 int main()
