@@ -42,8 +42,6 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
-    static bool isSeparator(int x)
-    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -60,11 +58,14 @@ public:
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar()
-    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
+    char nextChar() {return static_cast<char>(getchar());}
 } scanner;
 
-int main()
+#define int longs
+const int N = 250;
+int t[N];
+
+signed main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
@@ -72,7 +73,33 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    int q, n;
+    scanner(q);
+    while (q --)
+    {
+        scanner(n);
+        for (int i = 1; i <= n; ++ i)
+            scanner(t[i]);
+        sort(t + 1, t + 1 + n);
+        stack<int> use;
+        int cur = 0, ans = 0;
+        for (int i = 1; i <= n; ++ i)
+            if (t[i] > cur)
+            {
+                for (int j = cur + 1; j < t[i]; ++ j)
+                    use.push(j);
+                cur = t[i];
+            }
+            else if (!use.empty())
+            {
+                int useF = abs(use.top() - t[i]),
+                    useB = abs(cur + 1 - t[i]);
+                if (useF <= useB) use.pop(), ans += useF;
+                else ++ cur, ans += useB;
+            }
+            else ++ cur, ans += abs(cur - t[i]);
+        println(ans);
+    }
 
     return 0;
 }

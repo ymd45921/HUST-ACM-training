@@ -42,8 +42,6 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
-    static bool isSeparator(int x)
-    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -60,9 +58,11 @@ public:
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar()
-    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
+    char nextChar() {return (char)getchar();}
 } scanner;
+
+const int N = 1050;
+int a[N];
 
 int main()
 {
@@ -72,7 +72,20 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    Scanner sc;
+    int t = sc.nextInt();
+    while (t --)
+    {
+        int n = sc.nextInt();
+        for (int i = 1; i <= n; ++ i)
+            a[i] = sc.nextInt();
+        int lim = n / 2;
+        for (int i = n; i > lim; -- i)
+            printf("%d ", -a[i]);
+        for (int i = lim; i > 1; -- i)
+            printf("%d ", a[i]);
+        println(a[1]);
+    }
 
     return 0;
 }

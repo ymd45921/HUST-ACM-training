@@ -1,6 +1,8 @@
 /**
  *
- *
+ * ?…… 暴力wa了？
+ * 
+ * A, B is positive integers（（
  */
 #include <bits/stdc++.h>
 
@@ -10,18 +12,28 @@ using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
 
+#define lll __int128
+#define minimize(a, b) ((a) = min(a, b))
+#define maximize(a, b) ((a) = max(a, b))
+#define sgn(x) ((x) < 0 ? -1 : (x) > 0)
+
+#if 1
 #define eprintf(x...) fprintf(stderr, x)
 #define var(x) ""#x" = " << x
-#define lll __int128
-#define minimize(a, b) (a = min(a, b))
-#define maximize(a, b) (a = max(a, b))
+#define watch(args...) cerr << args << endl
+#define $$ << ", " <<
+#define vars(x, y...) var(x) << ", " << vars(y)
+#else
+#define eprintf(...)
+#define watch(...)
+#endif
 
 void print(__int128 x)
 {
     if (x < 0) { putchar('-'); x = -x; }
     static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
+    while (x > 9) { str[cnt ++] = (x % 10) - 48; x /= 10;}
+    str[cnt ++] = x - 48;
     while (cnt --) putchar(str[cnt]);
 }
 template <class T>
@@ -42,8 +54,6 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
-    static bool isSeparator(int x)
-    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -60,8 +70,7 @@ public:
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar()
-    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
+    char nextChar() {return static_cast<char>(getchar());}
 } scanner;
 
 int main()
@@ -72,8 +81,20 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
-
+    unordered_map<lll, pair<int, int>> ans;
+    vector<lll> pow3, pow5;
+    pow3.push_back(1), pow5.push_back(1);
+    lll now = pow3.back(), lim = 1e18;
+    while ((now *= 3) <= lim) pow3.push_back(now);
+    now = pow5.back();
+    while ((now *= 5) <= lim) pow5.push_back(now);
+    auto siz3 = pow3.size(), siz5 = pow5.size();
+    for (int i = 1; i < siz3; ++ i)
+        for (int j = 1; j < siz5; ++ j)
+            ans[pow3[i] + pow5[j]] = {i, j};
+    lll n = scanner.nextInt128();
+    if (ans.count(n)) printf("%d %d\n", ans[n].first, ans[n].second);
+    else puts("-1");
     return 0;
 }
 

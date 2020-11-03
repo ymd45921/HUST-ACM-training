@@ -10,18 +10,28 @@ using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
 
+#define lll __int128
+#define minimize(a, b) ((a) = min(a, b))
+#define maximize(a, b) ((a) = max(a, b))
+#define sgn(x) ((x) < 0 ? -1 : (x) > 0)
+
+#if 1
 #define eprintf(x...) fprintf(stderr, x)
 #define var(x) ""#x" = " << x
-#define lll __int128
-#define minimize(a, b) (a = min(a, b))
-#define maximize(a, b) (a = max(a, b))
+#define watch(args...) cerr << args << endl
+#define $$ << ", " <<
+#define vars(x, y...) var(x) << ", " << vars(y)
+#else
+#define eprintf(...)
+#define watch(...)
+#endif
 
 void print(__int128 x)
 {
     if (x < 0) { putchar('-'); x = -x; }
     static char str[40]; int cnt = 0;
-    while (x > 9) { str[cnt ++] = (x % 10) ^ 48; x /= 10;}
-    str[cnt ++] = x ^ 48;
+    while (x > 9) { str[cnt ++] = (x % 10) - 48; x /= 10;}
+    str[cnt ++] = x - 48;
     while (cnt --) putchar(str[cnt]);
 }
 template <class T>
@@ -42,8 +52,6 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
-    static bool isSeparator(int x)
-    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -60,9 +68,12 @@ public:
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar()
-    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
+    char nextChar() {return static_cast<char>(getchar());}
 } scanner;
+
+const int N = 2e5 + 5, K = 500;
+const longs mod = 998244353;
+longs a[N][K], sum[K];
 
 int main()
 {
@@ -72,6 +83,16 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
+    int n, k;
+    scanner(n, k);
+    for (int i = 1; i <= n; ++ i)
+        scanner(a[i][1]);
+    for (int p = 2; p <= k; ++ p)
+        for (int i = 1; i <= n; ++ i)
+            a[i][p] = a[i][p - 1] * a[i][1] % mod;
+    for (int p = 1; p <= k; ++ p)
+        for (int i = 1; i <= n; ++ i)
+            sum[p] = (sum[p] + a[i][p]) % mod;
 
 
     return 0;

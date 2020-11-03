@@ -42,8 +42,6 @@ static class Scanner
         while (isdigit(ch)) x = x * 10 + ch - 48, ch = getchar();
         return f ? -x : x;
     }
-    static bool isSeparator(int x)
-    {return x == ' ' || x == '\n';}
 
 public:
 
@@ -60,9 +58,25 @@ public:
     int nextInt() {return read<int>();}
     longs nextLongs() {return read<longs>();}
     lll nextInt128() {return read<lll>();}
-    char nextChar()
-    {int x = getchar(); while (isSeparator(x)) x = getchar(); return x;}
+    char nextChar() {return (char)getchar();}
 } scanner;
+
+template <int n> auto &EulerSieve()
+{
+    static vector<int> prime;
+    static bitset<n> vis;
+    for (int i = 2; i <= n; ++ i)
+    {
+        if (!vis[i]) prime.push_back(i);
+        for (auto & pp : prime)
+        {
+            if ((longs)i * pp > n) break;
+            vis[i * pp] = true;
+            if (i % pp == 0) break;
+        }
+    }
+    return vis;
+}
 
 int main()
 {
@@ -72,7 +86,36 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
+    int t = scanner.nextInt();
+    auto isNotPrime = EulerSieve<2080>();
+    while (t --)
+    {
+        int n = scanner.nextInt();
+        if (isNotPrime[n])
+        {
+            int sum = n * 4 - 3;
+            int even = 4;
+            while (isNotPrime[sum])
+                even += 2, sum += 2;
+            for (int i = 0; i < n; ++ i)
+            {
+                for (int x = 0; x < n; ++ x)
+                {
+                    int j = (x + i) % n;
+                    if (!j) printf("1 ");
+                    else if (j != 1) printf("4 ");
+                    else printf("%d ", even);
+                }
+                puts("");
+            }
+        }
+        else for (int i = 1; i <= n; ++ i)
+        {
+            for (int j = 1; j <= n; ++ j)
+                printf("1 ");
+            puts("");
+        }
+    }
 
     return 0;
 }
