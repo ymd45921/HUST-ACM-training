@@ -19,13 +19,22 @@ using longd = long double;
 #if 1
 #define eprintf(x...) fprintf(stderr, x)
 #define var(x) ""#x" = " << x
-#define watch(args...) cerr << args << endl
-#define $$ << ", " <<
-#define vars(x, y...) var(x) << ", " << vars(y)
+#define watch(...) trace(#__VA_ARGS__, __VA_ARGS__)
 #else
 #define eprintf(...)
 #define watch(...)
 #endif
+
+template <class printable>
+void trace(const char *name, printable &&value)
+{cerr << name << " = " << value << endl;}
+template <class printable, class ...args>
+void trace(const char *names, printable &&value, args &&...list)
+{
+    const char *separate = strchr(names + 1, ',');
+    cerr.write(names, separate - names) << " = " << value << ',';
+    trace(separate + 1, list...);
+}
 
 template <class T>
 void print(T x)

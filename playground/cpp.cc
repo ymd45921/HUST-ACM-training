@@ -10,12 +10,28 @@ using uint = unsigned;
 using ulongs = unsigned long long;
 using longd = long double;
 
-#define eprintf(x...) fprintf(stderr, x)
-#define var(x) ""#x" = " << x
 #define lll __int128
 #define minimize(a, b) (a = min(a, b))
 #define maximize(a, b) (a = max(a, b))
+#if 1
+#define eprintf(x...) fprintf(stderr, x)
+#define var(x) ""#x" = " << x
+#define watch(...) trace(#__VA_ARGS__, __VA_ARGS__)
+#else
+#define eprintf(...)
+#define watch(...)
+#endif
 
+template <class printable>
+void trace(const char *name, printable &&value)
+{cerr << name << " = " << value << endl;}
+template <class printable, class ...args>
+void trace(const char *names, printable &&value, args &&...list)
+{
+    const char *separate = strchr(names + 1, ',');
+    cerr.write(names, separate - names) << " = " << value << ',';
+    trace(separate + 1, list...);
+}
 void print(__int128 x)
 {
     if (x < 0) { putchar('-'); x = -x; }
