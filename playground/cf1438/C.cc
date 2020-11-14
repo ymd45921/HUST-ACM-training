@@ -82,8 +82,8 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-const int N = 110;
-int a[N][N], b[N][N];
+const int N = 120;
+int a[N][N], x[N][N];
 
 int main()
 {
@@ -93,15 +93,25 @@ int main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int t = scanner.nextInt(), n, m;
+    int t = scanner.nextInt();
     while (t --)
     {
-        scanner(n, m);
+        int n = scanner.nextInt(),
+            m = scanner.nextInt();
         for (int i = 1; i <= n; ++ i)
             for (int j = 1; j <= m; ++ j)
                 a[i][j] = scanner.nextInt();
-        b[1][1] = a[1][1];
-        
+        for (int i = 1; i <= n; ++ i)
+            for (int j = 1; j <= m; ++ j)
+                if (a[i][j] % 2 != (i + j) % 2)
+                    x[i][j] = 1;
+                else x[i][j] = 0;
+        for (int i = 1; i <= n; ++ i)
+        {
+            for (int j = 1; j <= m; ++ j)
+                printf("%d ", x[i][j] + a[i][j]);
+            puts("");      
+        }                  
     }
 
     return 0;
