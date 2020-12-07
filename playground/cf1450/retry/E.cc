@@ -11,7 +11,8 @@
  * + 判断它是不是资本主义社会
  * + 如果是资本主义社会，输出可能的一组收入，使得不平等程度最大化
  * 
- * 
+ * 晚上实在是没啥脑子了，对着标程撸了一发，明天起来看看好了（
+ * 不得不说又从标程这里学到了一些良好的代码习惯，这是好事
  */
 #include <bits/stdc++.h>
 
@@ -103,6 +104,18 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
+const int N = 205;
+const int inf = 0x3f3f3f3f;
+int g[N][N];
+
+void floyd(int n)
+{
+    for (int k = 1; k <= n; ++ k)
+        for (int i = 1; i <= n; ++ i)
+            for (int j = 1; j <= n; ++ j)
+                minimize(g[i][j], g[i][k] + g[k][j]);
+}
+
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -111,7 +124,42 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-
-
+    int n, m, u, v, b;
+    scanner(n, m);
+    for (int i = 1; i <= n; ++ i)
+        memset(g[i], 0x3f, sizeof(int) * (n + 1)),
+        g[i][i] = 0;
+    vector<tuple<int, int, int>> edgeList;    
+    while (m --)
+    {
+        scanner(u, v, b);
+        g[u][v] = 1;
+        g[v][u] = b ? -1 : 1;
+        edgeList.emplace_back(u, v, b);
+    } floyd(n);
+    bool hasNegaCircle = false; 
+    pair<int, int> longest(-1, 1);
+    for (int i = 1; i <= n; ++ i)
+    {
+        if (g[i][i] < 0) 
+        {hasNegaCircle = true; break;}  // Check negative circle
+        for (int j = 1; j <= n; ++ j)
+            maximize(longest, {g[i][j], i});
+    } 
+    bool isBiPartite = true;
+    const auto s = longest.second;
+    for (auto [u, v, b] : edgeList)
+        if (g[s][u] == g[s][v]) 
+        {isBiPartite = false; break;}   // Check non-bi-partite
+    if (hasNegaCircle || !isBiPartite)
+        puts("NO");
+    else 
+    {
+        puts("YES");
+        println(longest.first);
+        for (int i = 1; i <= n; ++ i)
+            print(g[s][i], ' ');
+        puts("");    
+    }    
     return 0;
 }
