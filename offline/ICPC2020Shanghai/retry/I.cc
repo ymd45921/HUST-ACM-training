@@ -1,9 +1,7 @@
 /**
  *
- * 我说怎么比赛的时候过不了，原来队友读了假题
- * 
- * 但是这真的是一道优秀的题目，至少对于现在的我们的队伍来说
- * 首先有一些严肃的问题
+ * WA：使用 assert 交题查错，发现 x 的计算有问题——我竟然不会写二分
+ * WA：浮点还有这种需要注意的地方？这是因为什么啊草（
  */
 #include <bits/stdc++.h>
 
@@ -50,9 +48,9 @@ void print(T x)
     str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
-void print(const char *s) {fputs(s, stdout);}
-void print(char *s) {fputs(s, stdout);}
-void print(string &s) {print(s.c_str());}
+void print(string &s) {printf(s.c_str());}
+void print(const char *s) {printf(s);}
+void print(char *s) {printf(s);}
 void print(char ch) {putchar(ch);}
 template <class T, class ...Ts>
 void print(T x, Ts ...xs) {print(x), print(xs...);}
@@ -95,7 +93,56 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-constexpr longd eps = 1e-8;
+#define PI acosl(-1)
+using answer = pair<longs, longs>;
+
+ostream &operator <<(ostream &os, const answer &ans)
+{return os << ans.first << " * PI + " << ans.second;}
+answer &operator +=(answer &a, const answer &b)
+{return a.first += b.first, a.second += b.second, a;}
+answer &operator *=(answer &a, const longs t)
+{return a.first *= t, a.second *= t, a;}
+answer &operator /=(answer &a, const longs t)
+{return a.first /= t, a.second /= t, a;}
+longd toNumber(const answer &ans)
+{return ans.first * PI + ans.second;}
+
+int bruteSolveX(int m)
+{
+    int ret = 0;
+    for (ret = 1; ret <= m; ++ ret)
+        if (ret * PI >= m * 2.0) break;
+    return ret;
+}
+
+int binarySolveX(int m)
+{
+    int ll = 1, rr = m, x = m;
+    while (ll <= rr)
+    {
+        int mid = (ll + rr) / 2;
+        if (mid * PI >= m * 2.0)
+            x = mid, rr = mid - 1;
+        else ll = mid + 1;
+    }
+    return x;
+}
+
+int floatSolveX(int m)
+{return (int)floor(2 * m / PI) + 1;}
+
+auto singleCircle(int m)
+{
+    longs x = floatSolveX(m);
+    assert(x * PI >= m * 2 && (x - 1) * PI < m * 2);
+    longs arc = (x - 1) * x / 2 * 2;
+    longs str = (m - x) * 2 + 1;
+    return [arc, str, m](int r) -> answer
+    {
+        const int d = r * 2;
+        return make_pair(arc * r, str * d * m);
+    };
+}
 
 signed main()
 {
@@ -105,65 +152,30 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int t;
-    longd n;
-    pair<longd, longd> a1, a2;
-    cout << fixed << setprecision(10);
-    const auto solo = [&](pair<longd, longd> &info) -> longd
-    {
-        auto [p, v] = info;
-        return (min(p, n - p) + n) / v;
-    };
-    const auto combine = [&](pair<longd, longd> &a, pair<longd, longd> &b) -> bool
-    {
-        if (a > b) swap(a, b);
-        return a.second >= b.first && a.first <= 0 && b.second >= n;
-    };
-    const auto check = [&](longd time) -> bool
-    {
-        auto [p1, v1] = a1; auto [p2, v2] = a2;
-        longd s1 = v1 * time, s2 = v2 * time;
-        auto seg1 = make_pair(p1 - s1, p1);
-        auto seg2 = make_pair(p2, p2 + s2);
-        if (seg1.first <= 0)
+    int n = scanner.nextInt(),
+        m = scanner.nextInt();
+    const auto cir = singleCircle(m);
+    vector<answer> f(n + 1);
+    answer ans;
+    for (int i = 1; i <= n; ++ i)
+        ans += f[i] = cir(i);
+    const longs m2 = m * 2;
+    for (int R = n; R > 1; -- R)
+        for (int r = R - 1; r; -- r)
         {
-            maximize(seg1.second, -seg1.first, (s1 + p1) / 2);
-            minimize(seg1.second, n);
-            seg1.first = 0;
+            auto tmp = f[r];
+            tmp *= 2;
+            tmp.second += (R - r) * m2 * m2;
+            ans += tmp;
         }
-        if (seg2.second >= n)
-        {
-            minimize(seg2.first, 2 * n - seg2.second, (n + p2 - s2) / 2);
-            maximize(seg2.first, 0.l);
-            seg2.second = n;
-        }
-        return combine(seg1, seg2);
-    };
-    const auto metInCenter = [&]() -> longd
+    if (m > 1)
     {
-        auto [p1, v1] = a1;auto [p2, v2] = a2;
-        auto cen = p2 - p1, time = cen / (v1 + v2);
-        auto pos = p1 + time * v1;
-        time += max(pos / v1, (n - pos) / v2);
-        return min(time, max((n - p1) / v1, p2 / v2));
-    };
-    for (cin >> t; t --;)
-    {
-        cin >> n >> a1.first >> a1.second
-            >> a2.first >> a2.second;
-        if (a1.first > a2.first)
-            swap(a1, a2);
-        longd ans = min({solo(a1), solo(a2), metInCenter()});
-        longd ll = 0, rr = ans;
-        int limit = 10000;
-        while (limit -- && ll < rr - eps)
-        {
-            auto mid = (ll + rr) / 2;
-            if (check(mid))
-                minimize(ans, mid), rr = mid;
-            else ll = mid;
-        }
-        cout << ans << endl;
+        int cnt = (n + 1) * n / 2;
+        ans.second += cnt * m2;
     }
+    longd out = toNumber(ans);
+    out += out * 1e-7;      // ？？？
+    cerr << ans << endl;
+    cout << fixed << setprecision(10) << out << endl;
     return 0;
 }

@@ -1,3 +1,10 @@
+/**
+ * 
+ * 比赛时写的代码只有两个问题：
+ * - 应该使用 long long 来存储系数的
+ * - 输出前使用神秘的精度修正
+ * 这还真是……涉及到我的知识盲区了（
+ */
 #include<bits/stdc++.h>
 
 using namespace std;
@@ -9,18 +16,7 @@ using number = double;
 
 constexpr number PI = 3.1415926535897932384626;
 
-int solveX(int m)
-{
-    int l = 1, r = m, x = 0;
-    while (l <= r)
-    {
-        int mid = (l + r) / 2;
-        if (PI * mid / m >= 2)
-            x = mid, r = mid - 1;
-        else l = mid + 1;
-    }
-    return x;
-}
+#define int long long
 
 using answer = pair<int, int>;
 number toNumber(answer &ans)
@@ -43,7 +39,7 @@ answer &operator /=(answer &ans, int t)
 
 auto inCircle(int m)
 {
-    int x = solveX(m);
+    int x = (int)floor(2 * m / PI) + 1;;
     assert((number)x * PI / m >= 2 && (number)(x - 1) * PI / m <= 2);
     const int sumX = (x - 1) * x / 2;
     const int goD = m - x + 1;
@@ -56,24 +52,23 @@ auto inCircle(int m)
     };
 }
 
-int main()
+signed main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr), cout.tie(nullptr);
 
     int n, m;
     cin >> n >> m;
-    const auto f = inCircle(m);  // * m
+    const auto f = inCircle(m);
     answer ans = make_pair(0, 0);
     for (int r = 1; r <= n; ++ r)
     {
-        const auto fr = f(r);
-        ans += fr;
+        auto fr = f(r);
+        ans += fr, fr *= 2;
         for (int R = r + 1; R <= n; ++ R)
         {
             auto tmp = fr;
-            tmp.second += 2 * m * (R - r);
-            tmp *= 2 * m;
+            tmp.second += 4 * m * m * (R - r);
             ans += tmp;
         }
     }
@@ -84,9 +79,8 @@ int main()
         ans.second += tmp;
     }
     cerr << ans.first << "π + " << ans.second << endl;
-    cout << fixed << setprecision(10) << toNumber(ans) << endl;
+    auto output = toNumber(ans);
+    output += output * 1e-7;
+    cout << fixed << setprecision(10) << output << endl;
     return 0;
-
 }
-
-
