@@ -1,9 +1,8 @@
 /**
  *
- * 我说怎么比赛的时候过不了，原来队友读了假题
+ * 更加通常且简单易懂的二分终点位置的方法
  * 
- * 但是这真的是一道优秀的题目，至少对于现在的我们的队伍来说
- * 首先有一些严肃的问题
+ * 实际的实行精度要比二分时间略高
  */
 #include <bits/stdc++.h>
 
@@ -106,62 +105,28 @@ signed main()
     freopen("in.txt", "r", stdin);
 #endif
     int t;
-    longd n;
-    pair<longd, longd> a1, a2;
+    longd n, p1, v1, p2, v2, ans;
     cout << fixed << setprecision(10);
-    const auto solo = [&](pair<longd, longd> &info) -> longd
+    const auto calc = [](longd n, longd p, longd v)
+    {return (min(p, n - p) + n) / v;};
+    const auto check = [&](longd met)
     {
-        auto [p, v] = info;
-        return (min(p, n - p) + n) / v;
-    };
-    const auto combine = [&](pair<longd, longd> &a, pair<longd, longd> &b) -> bool
-    {
-        if (a > b) swap(a, b);
-        return a.second >= b.first && a.first <= 0 && b.second >= n;
-    };
-    const auto check = [&](longd time) -> bool
-    {
-        auto [p1, v1] = a1; auto [p2, v2] = a2;
-        longd s1 = v1 * time, s2 = v2 * time;
-        auto seg1 = make_pair(p1 - s1, p1);
-        auto seg2 = make_pair(p2, p2 + s2);
-        if (seg1.first <= 0)
-        {
-            maximize(seg1.second, -seg1.first, (s1 + p1) / 2);
-            minimize(seg1.second, n);
-            seg1.first = 0;
-        }
-        if (seg2.second >= n)
-        {
-            minimize(seg2.first, 2 * n - seg2.second, (n + p2 - s2) / 2);
-            maximize(seg2.first, 0.l);
-            seg2.second = n;
-        }
-        return combine(seg1, seg2);
-    };
-    const auto metInCenter = [&]() -> longd
-    {
-        auto [p1, v1] = a1;auto [p2, v2] = a2;
-        auto cen = p2 - p1, time = cen / (v1 + v2);
-        auto pos = p1 + time * v1;
-        time += max(pos / v1, (n - pos) / v2);
-        return min(time, max((n - p1) / v1, p2 / v2));
+        auto t1 = calc(met, p1, v1), t2 = calc(n - met, p2 - met, v2);
+        minimize(ans, max(t1, t2));
+        return t1 > t2;
     };
     for (cin >> t; t --;)
     {
-        cin >> n >> a1.first >> a1.second
-            >> a2.first >> a2.second;
-        if (a1.first > a2.first)
-            swap(a1, a2);
-        longd ans = min({solo(a1), solo(a2), metInCenter()});
-        longd ll = 0, rr = ans;
+        cin >> n >> p1 >> v1 >> p2 >> v2;
+        if (p1 > p2) swap(p1, p2), swap(v1, v2);
+        ans = min({calc(n, p1, v1), calc(n, p2, v2), max((n - p1) / v1, p2 / v2)});
         int limit = 10000;
-        while (limit -- && ll < rr - eps)
+        longd lp = p1, rp = p2;
+        while (limit -- && lp < rp - eps)
         {
-            auto mid = (ll + rr) / 2;
-            if (check(mid))
-                minimize(ans, mid), rr = mid;
-            else ll = mid;
+            auto mid = (lp + rp) / 2;
+            if (check((lp + rp) / 2)) rp = mid;
+            else lp = mid;
         }
         cout << ans << endl;
     }

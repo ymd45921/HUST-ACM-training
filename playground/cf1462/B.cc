@@ -1,9 +1,6 @@
 /**
  *
- * 我说怎么比赛的时候过不了，原来队友读了假题
- * 
- * 但是这真的是一道优秀的题目，至少对于现在的我们的队伍来说
- * 首先有一些严肃的问题
+ *
  */
 #include <bits/stdc++.h>
 
@@ -50,9 +47,9 @@ void print(T x)
     str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
-void print(const char *s) {fputs(s, stdout);}
-void print(char *s) {fputs(s, stdout);}
-void print(string &s) {print(s.c_str());}
+void print(string &s) {printf(s.c_str());}
+void print(const char *s) {printf(s);}
+void print(char *s) {printf(s);}
 void print(char ch) {putchar(ch);}
 template <class T, class ...Ts>
 void print(T x, Ts ...xs) {print(x), print(xs...);}
@@ -95,8 +92,6 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-constexpr longd eps = 1e-8;
-
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -105,65 +100,27 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int t;
-    longd n;
-    pair<longd, longd> a1, a2;
-    cout << fixed << setprecision(10);
-    const auto solo = [&](pair<longd, longd> &info) -> longd
+    int t, n;
+    string s, $2020 = "2020";
+    cin >> t;
+    while (t --)
     {
-        auto [p, v] = info;
-        return (min(p, n - p) + n) / v;
-    };
-    const auto combine = [&](pair<longd, longd> &a, pair<longd, longd> &b) -> bool
-    {
-        if (a > b) swap(a, b);
-        return a.second >= b.first && a.first <= 0 && b.second >= n;
-    };
-    const auto check = [&](longd time) -> bool
-    {
-        auto [p1, v1] = a1; auto [p2, v2] = a2;
-        longd s1 = v1 * time, s2 = v2 * time;
-        auto seg1 = make_pair(p1 - s1, p1);
-        auto seg2 = make_pair(p2, p2 + s2);
-        if (seg1.first <= 0)
+        cin >> n >> s;
+        if (n < 4)
         {
-            maximize(seg1.second, -seg1.first, (s1 + p1) / 2);
-            minimize(seg1.second, n);
-            seg1.first = 0;
+            cout << "NO" << endl;
+            continue;
         }
-        if (seg2.second >= n)
+        int cur = 0;
+        while (s[cur] == $2020[cur]) ++ cur;
+        if (cur >= 4 || cur >= n) cout << "YES" << endl;
+        else
         {
-            minimize(seg2.first, 2 * n - seg2.second, (n + p2 - s2) / 2);
-            maximize(seg2.first, 0.l);
-            seg2.second = n;
+            int $cur = n - (4 - cur);
+            while (s[$cur] == $2020[cur]) ++ cur, ++ $cur;
+            if ($cur >= n) cout << "YES" << endl;
+            else cout << "NO" << endl;
         }
-        return combine(seg1, seg2);
-    };
-    const auto metInCenter = [&]() -> longd
-    {
-        auto [p1, v1] = a1;auto [p2, v2] = a2;
-        auto cen = p2 - p1, time = cen / (v1 + v2);
-        auto pos = p1 + time * v1;
-        time += max(pos / v1, (n - pos) / v2);
-        return min(time, max((n - p1) / v1, p2 / v2));
-    };
-    for (cin >> t; t --;)
-    {
-        cin >> n >> a1.first >> a1.second
-            >> a2.first >> a2.second;
-        if (a1.first > a2.first)
-            swap(a1, a2);
-        longd ans = min({solo(a1), solo(a2), metInCenter()});
-        longd ll = 0, rr = ans;
-        int limit = 10000;
-        while (limit -- && ll < rr - eps)
-        {
-            auto mid = (ll + rr) / 2;
-            if (check(mid))
-                minimize(ans, mid), rr = mid;
-            else ll = mid;
-        }
-        cout << ans << endl;
     }
     return 0;
 }
