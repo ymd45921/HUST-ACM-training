@@ -4,10 +4,11 @@
  * - 两个异或：F 要想到二进制拆位，K 要想到满足条件的二元对很有限
  * - 如果上述两个要点都没有想到，那么这场比赛也就倒了==
  * 不得不说还蛮真实的，我就是两个都没有想到，不如说没可能想到吧（
- * 
+ *
  * HINT: x ^ y >= |x - y| >= gcd(x, y) --> a > b && a | b && a ^ b = (a - b)
- * 
+ *
  * 为什么套用 STL 还会过不了样例啊== 睡了睡了（
+ * 破案了：因为 ^ 的运算符优先级不如 == 高
  */
 #include <bits/stdc++.h>
 
@@ -119,16 +120,16 @@ namespace DSU
     void join(int x, int y)
     {
         int fx = father(x), fy = father(y);
-        if (fx != fy)
-            if (siz[fx] <= siz[fy]) fa[fx] = fy, siz[fy] += siz[fx];
-            else fa[fy] = fx, siz[fx] += siz[fy];
+        if (fx == fy) return;
+        if (siz[fx] <= siz[fy]) fa[fx] = fy, siz[fy] += siz[fx];
+        else fa[fy] = fx, siz[fx] += siz[fy];
     }
 }
 
 vector<int> dislike[N + M];
 hash_map sets[N + M];
 longs ans = 0;
-int a[N + M];
+int aa[N + M];
 
 longs count(int index, int x, int cnt)
 {
@@ -136,7 +137,7 @@ longs count(int index, int x, int cnt)
     for (auto y : dislike[x])
         if (sets[index].count(y))
             ret += 1ll * cnt * sets[index][y];
-    return ret;        
+    return ret;
 }
 
 void merge(int x, int y)
@@ -150,7 +151,7 @@ void merge(int x, int y)
         for (auto &[num, cnt] : sets[fy])
             ans += count(fx, num, cnt);
         for (auto &[num, cnt] : sets[fy])
-            sets[fx][num] += cnt;    
+            sets[fx][num] += cnt;
     }
 }
 
@@ -158,10 +159,10 @@ void change(int x, int v)
 {
     using namespace DSU;
     int f = father(x);
-    if (!-- sets[f][a[x]]) sets[f].erase(a[x]);
-    ans -= count(f, a[x], 1);
+    if (!-- sets[f][aa[x]]) sets[f].erase(aa[x]);
+    ans -= count(f, aa[x], 1);
     ans += count(f, v, 1);
-    a[x] = v, ++ sets[f][v];
+    aa[x] = v, ++ sets[f][v];
 }
 
 signed main()
@@ -173,20 +174,20 @@ signed main()
     freopen("in.txt", "r", stdin);
 #endif
     int n = scanner.nextInt(),
-        m = scanner.nextInt(); 
+        m = scanner.nextInt();
     DSU::init(n + m);
     for (uint b = 1; b <= B; ++ b)
         for (uint a = b + b; a <= A; a += b)
         {
             auto c = a - b;
-            if (c ^ a == b)
+            if ((c ^ a) == b)   //// ^ has lower precedence than ==; == will be evaluated first
                 dislike[a].push_back(c),
                 dislike[c].push_back(a);
         }
     for (int i = 1; i <= n; ++ i)
     {
-        a[i] = scanner.nextInt();
-        ++ sets[i][a[i]];
+        aa[i] = scanner.nextInt();
+        ++ sets[i][aa[i]];
     }
     while (m --)
     {
@@ -194,8 +195,8 @@ signed main()
         if (t == 1)
         {
             int x = scanner.nextInt();
-            a[x] = scanner.nextInt();
-            ++ sets[x][a[x]];
+            aa[x] = scanner.nextInt();
+            ++ sets[x][aa[x]];
         }
         else if (t == 2)
         {
@@ -207,9 +208,9 @@ signed main()
         {
             int x = scanner.nextInt(),
                 v = scanner.nextInt();
-            change(x, v);    
+            change(x, v);
         }
         println(ans);
-    }        
+    }
     return 0;
 }
