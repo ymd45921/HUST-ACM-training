@@ -4,6 +4,9 @@
  * 但是还是没有答案的完善（
  *
  * WA5: 略有改进
+ *
+ * 只能说捞的连简单的搜索都不会写了（
+ * 这样一个简单的题目，也只是给你提个醒；
  */
 #include <bits/stdc++.h>
 
@@ -99,17 +102,20 @@ const int N = 1e5 + 5, M = N;
 const int inf = 0x3f3f3f3f;
 
 int to[N], self = 0;
-bitset<N> vis;
+bitset<N> vis, ins;
 int x[N], y[N];
 
 bool dfs(int u)
 {
-    if (!to[u]) return false;
-    if (vis[u]) return true;
-    else vis[u] = true;
-    if (to[u] == u) ++ self;
-    else return dfs(to[u]);
-    return false;
+    int v = to[u];
+    vis[u] = ins[u] = true;
+    bool ret = false;
+    if (!v);
+    else if (v == u) ++ self;
+    else if (!vis[v]) ret = dfs(v);
+    else if (ins[v]) ret = true;
+    ins[u] = false;
+    return ret;
 }
 
 signed main()
