@@ -1,6 +1,11 @@
 /**
  *
- * WA22: 爷吐辣
+ * 这不是模拟🐎？
+ * 
+ * 障碍不是凭空召唤的啊！
+ * 
+ * 因为今天考了数据库，所以就随便水一题好了（
+ * 真正的签到题==
  */
 #include <bits/stdc++.h>
 
@@ -92,9 +97,9 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-using number = double;
-unordered_map<number, int> hashMap;
-unordered_map<number, int> anti;
+const int N = 5050;
+char s[N];
+longs x[N], y[N];
 
 signed main()
 {
@@ -104,29 +109,34 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    while (T --)
+    unordered_map<char, int> dx, dy;
+    dx['U'] = dx['D'] = 0, dx['L'] = -1, dx['R'] = 1;
+    dy['L'] = dy['R'] = 0, dy['U'] = 1, dy['D'] = -1;
+    int t = scanner.nextInt();
+    while (t --)
     {
-        int n = scanner.nextInt();
-        hashMap.clear(), anti.clear();
-        while (n --)
+        scanner(s + 1);
+        int n  = strlen(s + 1);
+        for (int i = 1; i <= n; ++ i)
+            x[i] = x[i - 1] + dx[s[i]],
+            y[i] = y[i - 1] + dy[s[i]];
+        int ansx = 0, ansy = 0;
+        for (int i = 1; i <= n; ++ i)
         {
-            int x, y, u, v;
-            scanner(x, y, u, v);
-            int xx = u - x, yy = v - y;
-            if (!xx && !yy) continue;
-            else if (!xx || !yy) xx = sgn(xx), yy = sgn(yy);
-            int $gcd = __gcd(abs(xx), abs(yy));
-            xx /= $gcd, yy /= $gcd;
-            auto id = atan2(yy, xx);
-            ++ hashMap[id];
-            ++ anti[atan2(-yy, -xx)];
+            int bx = x[i], by = y[i];
+            int xx = 0, yy = 0;
+            for (int j = 1; j <= n; ++ j)
+            {
+                int tx = xx + dx[s[j]], ty = yy + dy[s[j]];
+                if (tx != bx || ty != by) xx = tx, yy = ty;
+            }
+            if (!xx && !yy)
+            {
+                ansx = bx, ansy = by;
+                break;
+            }
         }
-        lll ans = 0;
-        for (auto &[key, cnt] : hashMap)
-            if (anti.count(key))
-                ans += cnt * anti[key];
-        println(ans / 2);
+        print(ansx, ' ', ansy, '\n');
     }
     return 0;
 }

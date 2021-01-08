@@ -1,6 +1,13 @@
 /**
  *
- * WA22: 爷吐辣
+ * a[i] <= 500：说明 a[i] 可以用作 DP 的维度使用
+ *
+ * 可以发现这样的事实：
+ * + 经过操作，x 的值总是在增大
+ * + 操作只会将某位数字改的更大
+ * 综上所述，使得数列是有序的，我们修改的数字的下标是递增的
+ *
+ * 设 DP[i][j] 表示进行到 ai，且当前 a[i] = j 时的最小次数
  */
 #include <bits/stdc++.h>
 
@@ -47,13 +54,8 @@ void print(T x)
     str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
-void print(const char *s) {fputs(s, stdout);}
-void print(char *s) {fputs(s, stdout);}
-void print(string &s) {print(s.c_str());}
+void print(char *s) {printf(s);}
 void print(char ch) {putchar(ch);}
-template <class T, class ...Ts>
-void print(T x, Ts ...xs) {print(x), print(xs...);}
-void println() {puts("");}
 template <class T>
 void println(T x)
 {print(x), putchar('\n');}
@@ -92,9 +94,8 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-using number = double;
-unordered_map<number, int> hashMap;
-unordered_map<number, int> anti;
+const int N = 550;
+int a[N];
 
 signed main()
 {
@@ -104,29 +105,19 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    while (T --)
+    int t = scanner.nextInt(), n, x;
+    while (t --)
     {
-        int n = scanner.nextInt();
-        hashMap.clear(), anti.clear();
-        while (n --)
-        {
-            int x, y, u, v;
-            scanner(x, y, u, v);
-            int xx = u - x, yy = v - y;
-            if (!xx && !yy) continue;
-            else if (!xx || !yy) xx = sgn(xx), yy = sgn(yy);
-            int $gcd = __gcd(abs(xx), abs(yy));
-            xx /= $gcd, yy /= $gcd;
-            auto id = atan2(yy, xx);
-            ++ hashMap[id];
-            ++ anti[atan2(-yy, -xx)];
-        }
-        lll ans = 0;
-        for (auto &[key, cnt] : hashMap)
-            if (anti.count(key))
-                ans += cnt * anti[key];
-        println(ans / 2);
+        scanner(n, x);
+        for (int i = 1; i <= n; ++ i)
+            a[i] = scanner.nextInt();
+        int cnt = 0; bool ok = true;
+        for (int i = 2; i <= n; ++ i)
+            if (a[i] > x && a[i] < a[i - 1])
+                swap(a[i], x), ++ cnt;
+        for (int i = 2; i <= n; ++ i)
+            if (a[i] < a[i - 1]) ok = false;
+        println(ok ? cnt : -1);
     }
     return 0;
 }

@@ -1,6 +1,6 @@
 /**
  *
- * WA22: 爷吐辣
+ *
  */
 #include <bits/stdc++.h>
 
@@ -92,9 +92,11 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-using number = double;
-unordered_map<number, int> hashMap;
-unordered_map<number, int> anti;
+const longs mod = 1e9 + 7;
+const int N = 1060;
+
+#define lp(x) (llp[(x) + 5])
+#define rp(x) (rrp[(x) + 5])
 
 signed main()
 {
@@ -104,29 +106,16 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    while (T --)
+    int n = scanner.nextInt(),
+        k = scanner.nextInt();
+    longs ans = 0;
+    bitset<N> llp, rrp;
+    while (k --)
     {
-        int n = scanner.nextInt();
-        hashMap.clear(), anti.clear();
-        while (n --)
-        {
-            int x, y, u, v;
-            scanner(x, y, u, v);
-            int xx = u - x, yy = v - y;
-            if (!xx && !yy) continue;
-            else if (!xx || !yy) xx = sgn(xx), yy = sgn(yy);
-            int $gcd = __gcd(abs(xx), abs(yy));
-            xx /= $gcd, yy /= $gcd;
-            auto id = atan2(yy, xx);
-            ++ hashMap[id];
-            ++ anti[atan2(-yy, -xx)];
-        }
-        lll ans = 0;
-        for (auto &[key, cnt] : hashMap)
-            if (anti.count(key))
-                ans += cnt * anti[key];
-        println(ans / 2);
+        int c = scanner.nextInt(),
+            r = scanner.nextInt();
+        lp(c - r) = rp(c + r) = true;
     }
+
     return 0;
 }

@@ -1,6 +1,15 @@
 /**
  *
- * WA22: 爷吐辣
+ * 相当白给的一个题目；不知道比赛的时候我到底在担忧什么（
+ * 算了，我撤回前言，我知道我在想什么 ==
+ *
+ * 首先读题，一个贡献为分值带来 2 点贡献，每一个无用字符造成 1 点损失
+ *
+ * 标准的 LCS，就是枚举 DP 之后的公共子序列；
+ * DP[i][j] 的意义是两个字符串的前缀的公共子序列，答案就是 DP[n][m]；
+ * 我们虽然是求的两个子串，假设还是两个字符串的前缀；
+ * 对于前缀，有一对前缀对贡献为负，那么就可以忽略它的贡献（子串定义）
+ * 所以即使是求出最优子串，但是还是可以使用上面的 DP。
  */
 #include <bits/stdc++.h>
 
@@ -16,7 +25,7 @@ using lll = __int128;
 #define sgn(x) ((x) < 0 ? -1 : (x) > 0)
 #define puti(n) puts(to_string(n).c_str())
 
-#if 1
+#if 0
 #define eprintf(x...) fprintf(stderr, x)
 #define eputs(str) fputs(str, stderr), fputc('\n', stderr)
 #define var(x) ""#x" = " << x
@@ -47,13 +56,8 @@ void print(T x)
     str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
-void print(const char *s) {fputs(s, stdout);}
-void print(char *s) {fputs(s, stdout);}
-void print(string &s) {print(s.c_str());}
+void print(char *s) {printf(s);}
 void print(char ch) {putchar(ch);}
-template <class T, class ...Ts>
-void print(T x, Ts ...xs) {print(x), print(xs...);}
-void println() {puts("");}
 template <class T>
 void println(T x)
 {print(x), putchar('\n');}
@@ -92,9 +96,9 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-using number = double;
-unordered_map<number, int> hashMap;
-unordered_map<number, int> anti;
+const int N = 5050;
+int f[N][N];
+char s1[N], s2[N];
 
 signed main()
 {
@@ -104,29 +108,29 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    while (T --)
+    int n, m;
+    char *a = s1 + 1, *b = s2 + 1;
+    scanner(n, m, a, b);          // 哈哈，几把
+    watch(n, m, a, b);
+    s1[0] = s2[0] = '%';
+    watch(s1, s2);
+    const auto siz = sizeof(int) * (m + 1);
+    for (int i = 0; i <= n; ++ i)
+        memset(f[i], 0, siz);
+    for (int i = 1; i <= n; ++ i)
+        for (int j = 1; j <= m; ++ j)
+            maximize(f[i][j], f[i - 1][j] - 1, f[i][j - 1] - 1),
+            (s1[i] == s2[j]) && maximize(f[i][j], f[i - 1][j - 1] + 2);
+    int ans = 0;
+    for (int i = 1; i <= n; ++ i)
     {
-        int n = scanner.nextInt();
-        hashMap.clear(), anti.clear();
-        while (n --)
-        {
-            int x, y, u, v;
-            scanner(x, y, u, v);
-            int xx = u - x, yy = v - y;
-            if (!xx && !yy) continue;
-            else if (!xx || !yy) xx = sgn(xx), yy = sgn(yy);
-            int $gcd = __gcd(abs(xx), abs(yy));
-            xx /= $gcd, yy /= $gcd;
-            auto id = atan2(yy, xx);
-            ++ hashMap[id];
-            ++ anti[atan2(-yy, -xx)];
-        }
-        lll ans = 0;
-        for (auto &[key, cnt] : hashMap)
-            if (anti.count(key))
-                ans += cnt * anti[key];
-        println(ans / 2);
+        for (int j = 1; j <= m; ++ j)
+            eprintf("%d ", f[i][j]);
+        eputs("");
     }
+    for (int i = 1; i <= n; ++ i)
+        for (int j = 1; j <= m; ++ j)
+            maximize(ans, f[i][j]);
+    println(ans);
     return 0;
 }

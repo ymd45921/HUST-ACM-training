@@ -1,6 +1,8 @@
 /**
  *
- * WA22: 爷吐辣
+ * 草了，这怎么玩（
+ *
+ * 竟然是枚举 ==
  */
 #include <bits/stdc++.h>
 
@@ -47,13 +49,8 @@ void print(T x)
     str[cnt ++] = x + 48;
     while (cnt --) putchar(str[cnt]);
 }
-void print(const char *s) {fputs(s, stdout);}
-void print(char *s) {fputs(s, stdout);}
-void print(string &s) {print(s.c_str());}
+void print(char *s) {printf(s);}
 void print(char ch) {putchar(ch);}
-template <class T, class ...Ts>
-void print(T x, Ts ...xs) {print(x), print(xs...);}
-void println() {puts("");}
 template <class T>
 void println(T x)
 {print(x), putchar('\n');}
@@ -92,10 +89,6 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-using number = double;
-unordered_map<number, int> hashMap;
-unordered_map<number, int> anti;
-
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -104,29 +97,31 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    while (T --)
+    int t = scanner.nextInt();
+    pair<int, int> p[4];
+    while (t --)
     {
-        int n = scanner.nextInt();
-        hashMap.clear(), anti.clear();
-        while (n --)
+        for (auto &[x, y] : p)
+            scanner(x, y);
+        int ind[] = {0, 1, 2, 3}, xx[4], yy[4];
+        const auto calc = [&](int len)
         {
-            int x, y, u, v;
-            scanner(x, y, u, v);
-            int xx = u - x, yy = v - y;
-            if (!xx && !yy) continue;
-            else if (!xx || !yy) xx = sgn(xx), yy = sgn(yy);
-            int $gcd = __gcd(abs(xx), abs(yy));
-            xx /= $gcd, yy /= $gcd;
-            auto id = atan2(yy, xx);
-            ++ hashMap[id];
-            ++ anti[atan2(-yy, -xx)];
-        }
-        lll ans = 0;
-        for (auto &[key, cnt] : hashMap)
-            if (anti.count(key))
-                ans += cnt * anti[key];
-        println(ans / 2);
+            if (!len) return 0x3f3f3f3f3f3f3f3f;
+            for (int i = 0; i < 4; ++ i)
+                xx[i] = p[ind[i]].first,
+                yy[i] = p[ind[i]].second;
+            
+        };
+        longs ans = 0x3f3f3f3f3f3f3f3f;
+        do
+        {
+            int X0 = p[ind[0]].first, Y0 = p[ind[0]].second;
+            int X1 = p[ind[2]].first, Y1 = p[ind[0]].second;
+            for (auto &[x, y] : p)
+                minimize(ans, calc(abs(x - X0)), calc(abs(x - X1))),
+                minimize(ans, calc(abs(y - Y0)), calc(abs(y - Y1)));
+        } while (next_permutation(ind, ind + 4));
     }
+
     return 0;
 }
