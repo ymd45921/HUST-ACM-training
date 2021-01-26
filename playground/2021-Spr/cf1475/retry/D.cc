@@ -1,6 +1,10 @@
 /**
  *
+ * 确实是贪心，但是你贪的不是很对（
+ * 岂止是不对，简直错离谱了：能过样例也是因为代码写错了）
+ * 不对，标答怎么一股暴力的样子 ==
  *
+ * 反正总是要选一些 2 费和 1 费的，枚举查询就行了
  */
 #include <bits/stdc++.h>
 
@@ -93,8 +97,8 @@ public:
 } scanner;
 
 const int N = 2e5 + 5;
-longs a[N], b[N];
-int id[N];
+struct app {int a, b;} x[N];
+int aa[N], bb[N];
 
 signed main()
 {
@@ -107,27 +111,30 @@ signed main()
     int T = scanner.nextInt();
     while (T --)
     {
-        int n; longs m;
-        scanner(n, m), m *= 2;
+        int n = scanner.nextInt(),
+            m = scanner.nextInt();
         for (int i = 1; i <= n; ++ i)
-            a[i] = scanner.nextInt() * 2ll;
+            x[i].a = scanner.nextInt();
         for (int i = 1; i <= n; ++ i)
-            b[i] = scanner.nextInt(), id[i] = i;
-        sort(id + 1, id + 1 + n,
-             [](int x, int y) {return a[x] / b[x] > a[y] / b[y];});
-        longs fee = 0, res = m;
-        for (int i = 1, cur = id[i]; res > 0 && i <= n; cur = id[++ i])
-            if (res >= a[cur]) fee += b[cur], res -= a[cur];
-            else if (b[cur] == 1) ++ fee, res -= a[cur];
-            else
-            {
-                for (int j = i + 1, ptr = id[j]; j <= n; ptr = id[++ j])
-                    if (res > a[ptr]) break;
-                    else if (b[ptr] == 1)
-                    {++ fee; res -= a[ptr]; break;}
-                if (res > 0) fee += 2, res -= a[cur];
-            }
-        println(res > 0 ? -1 : fee);
+            x[i].b = scanner.nextInt();
+        int cnt1 = 0, cnt2 = 0;
+        for (int i = 1; i <= n; ++ i)
+            if (x[i].b == 2) bb[++ cnt2] = x[i].a;
+            else aa[++ cnt1] = x[i].a;
+        sort(aa + 1, aa + 1 + cnt1, greater<>());
+        sort(bb + 1, bb + 1 + cnt2, greater<>());
+        for (int i = 1; i <= cnt1; ++ i) aa[i] += aa[i - 1];
+        for (int i = 1; i <= cnt2; ++ i) bb[i] += bb[i - 1];
+        int ans = 0x3f3f3f3f, b = cnt2;
+        while (bb[b - 1] >= m) -- b;
+        for (int a = 0; a <= cnt1; ++ a)
+        {
+            if (aa[a] >= m) {minimize(ans, a); break;}
+            int res = m - aa[a];
+            while (bb[b - 1] >= res) -- b;
+            if (aa[a] + bb[b] >= m) minimize(ans, a + 2 * b);
+        }
+        println(ans == 0x3f3f3f3f ? -1 : ans);
     }
     return 0;
 }

@@ -1,6 +1,15 @@
 /**
  *
- *
+ * 看起来是个 DP，但是又不是那种通常的 DP
+ * + 遍历每一个数字然后判定它选不选，意义不明且有后效性
+ * 所以这个题目的 DP 比较的清新脱俗：和 n 没什么关系
+ * - 注意到 a 的范围也是 N，所以 a 可以作为 DP 的一环
+ * - 注意到 a[i] 和 a[j] 行不行只取决于它们俩，更可以 DP a
+ * - 统计最少删除的数字，不如统计最大可以保留的数字数
+ * - 可以保留的数字之间必须可以互相除通
+ * - f[i] 维护了可以保留的数字的数量，其中最大的是 i
+ * - 因此可以用 f[i] 更新任何 f[k * i]
+ * 别说看起来像是 n²，根据数论知识，这实际上是 nlogn 的
  */
 #include <bits/stdc++.h>
 
@@ -93,8 +102,8 @@ public:
 } scanner;
 
 const int N = 2e5 + 5;
-longs a[N], b[N];
-int id[N];
+
+int cnt[N], dp[N];
 
 signed main()
 {
@@ -107,27 +116,18 @@ signed main()
     int T = scanner.nextInt();
     while (T --)
     {
-        int n; longs m;
-        scanner(n, m), m *= 2;
+        int n = scanner.nextInt();
+        memset(dp, 0, sizeof dp);
+        memset(cnt, 0, sizeof cnt);
         for (int i = 1; i <= n; ++ i)
-            a[i] = scanner.nextInt() * 2ll;
-        for (int i = 1; i <= n; ++ i)
-            b[i] = scanner.nextInt(), id[i] = i;
-        sort(id + 1, id + 1 + n,
-             [](int x, int y) {return a[x] / b[x] > a[y] / b[y];});
-        longs fee = 0, res = m;
-        for (int i = 1, cur = id[i]; res > 0 && i <= n; cur = id[++ i])
-            if (res >= a[cur]) fee += b[cur], res -= a[cur];
-            else if (b[cur] == 1) ++ fee, res -= a[cur];
-            else
-            {
-                for (int j = i + 1, ptr = id[j]; j <= n; ptr = id[++ j])
-                    if (res > a[ptr]) break;
-                    else if (b[ptr] == 1)
-                    {++ fee; res -= a[ptr]; break;}
-                if (res > 0) fee += 2, res -= a[cur];
-            }
-        println(res > 0 ? -1 : fee);
+            ++ cnt[scanner.nextInt()];
+        for (int i = 1; i < N; ++ i)
+        {
+            dp[i] += cnt[i];
+            for (int j = 2 * i; j < N; j += i)
+                maximize(dp[j], dp[i]);
+        }
+        println(n - *max_element(dp, dp + N));
     }
     return 0;
 }
