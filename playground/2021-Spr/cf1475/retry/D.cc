@@ -5,6 +5,8 @@
  * 不对，标答怎么一股暴力的样子 ==
  *
  * 反正总是要选一些 2 费和 1 费的，枚举查询就行了
+ * 
+ * 不开 long long 两行泪（被hack力
  */
 #include <bits/stdc++.h>
 
@@ -98,7 +100,7 @@ public:
 
 const int N = 2e5 + 5;
 struct app {int a, b;} x[N];
-int aa[N], bb[N];
+longs aa[N], bb[N];
 
 signed main()
 {
@@ -131,7 +133,7 @@ signed main()
         {
             if (aa[a] >= m) {minimize(ans, a); break;}
             int res = m - aa[a];
-            while (bb[b - 1] >= res) -- b;
+            while (b && bb[b - 1] >= res) -- b;
             if (aa[a] + bb[b] >= m) minimize(ans, a + 2 * b);
         }
         println(ans == 0x3f3f3f3f ? -1 : ans);
