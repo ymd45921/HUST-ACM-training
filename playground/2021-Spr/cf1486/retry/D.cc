@@ -1,7 +1,10 @@
 /**
  *
- * 还是二分
- * 果然还是不会写二分
+ * 比 k 长的区间真的有必要吗？
+ * 大概有必要吧，看来是方法上出现了根本上的错误
+ * k = 2: [2, 1, 2] = 2, [2, 1] = [1, 2] = 1
+ *
+ * 因此可以二分，而不是搞个滑动窗口
  */
 #include <bits/stdc++.h>
 
@@ -93,6 +96,20 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
+const int N = 2e5 + 5;
+int a[N], b[N];
+
+bool check(int med, int n, int k)
+{
+    for (int i = 1; i <= n; ++ i)
+        b[i] = b[i - 1] + (a[i] >= med ? 1 : -1);
+    int _min = 0, _max = b[k];
+    for (int i = k + 1; i <= n; ++ i)
+        minimize(_min, b[i - k]),
+        maximize(_max, b[i] - _min);
+    return _max > 0;
+}
+
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -101,55 +118,17 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int n, second;
-    cin >> n;
-    cout << "? 1 " << n << endl;
-    cin >> second;
-    unordered_map<int, int> cache;
-    const auto ask =
-    [&](int pos)
+    int n = scanner.nextInt(),
+        k = scanner.nextInt();
+    for (int i = 1; i <= n; ++ i)
+        a[i] = scanner.nextInt();
+    int l = 1, r = n + 1, ans = 1;
+    while (r >= l)
     {
-        if (cache.count(pos))
-            return cache[pos];
-        else
-        {
-            int in;
-            int l = min(second, pos);
-            int r = max(second, pos);
-            cout << "? " << l << ' ' << r << endl;
-            cin >> in;
-            return cache[pos] = in;
-        }
-    };
-    const auto bin =
-    [&](int l, int r, bool dir) -> int
-    {
-        int ll = l, rr = r;
-        if (rr == ll) return ll;
-        while (ll < rr)
-        {
-            auto mid = (ll + rr) / 2 + !dir;
-            int res = ask(mid);
-            if (res == second)
-                (dir ? rr : ll) = mid;
-            else (dir ? ll : rr) = mid + (dir ? 1 : -1);
-        }
-        return dir ? rr : ll;
-    };
-    int ans;
-    if (second == 1)
-        ans = bin(2, n, true);
-    else if (second == n)
-        ans = bin(1, n - 1, false);
-    else
-    {
-        cout << "? 1 " << second << endl;
-        int tmp; cin >> tmp;
-        int ll = 1, rr = n;
-        if (tmp == second) rr = second - 1;
-        else ll = second + 1;
-        ans = bin(ll, rr, tmp != second);
+        int mid = (l + r) / 2;
+        if (!check(mid, n, k)) r = mid - 1;
+        else ans = mid, l = mid + 1;
     }
-    cout << "! " << ans << endl;
+    println(ans);
     return 0;
 }

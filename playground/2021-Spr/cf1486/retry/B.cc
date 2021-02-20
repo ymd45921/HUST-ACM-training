@@ -1,7 +1,8 @@
 /**
  *
- * 还是二分
- * 果然还是不会写二分
+ * 方法应该没错，对不对就另说了
+ * 是对的，但是写法也太傻逼了（
+ * x 和 y 又没有关联，分开排序不就完了
  */
 #include <bits/stdc++.h>
 
@@ -93,6 +94,16 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
+const int N = 1060;
+vector<int> x, y;
+
+longs median(vector<int> &vec)
+{
+    sort(vec.begin(), vec.end());
+    auto siz = vec.size();
+    return vec[siz / 2] - vec[(siz - 1) / 2] + 1;
+}
+
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -101,55 +112,15 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int n, second;
-    cin >> n;
-    cout << "? 1 " << n << endl;
-    cin >> second;
-    unordered_map<int, int> cache;
-    const auto ask =
-    [&](int pos)
+    int T = scanner.nextInt();
+    while (T --)
     {
-        if (cache.count(pos))
-            return cache[pos];
-        else
-        {
-            int in;
-            int l = min(second, pos);
-            int r = max(second, pos);
-            cout << "? " << l << ' ' << r << endl;
-            cin >> in;
-            return cache[pos] = in;
-        }
-    };
-    const auto bin =
-    [&](int l, int r, bool dir) -> int
-    {
-        int ll = l, rr = r;
-        if (rr == ll) return ll;
-        while (ll < rr)
-        {
-            auto mid = (ll + rr) / 2 + !dir;
-            int res = ask(mid);
-            if (res == second)
-                (dir ? rr : ll) = mid;
-            else (dir ? ll : rr) = mid + (dir ? 1 : -1);
-        }
-        return dir ? rr : ll;
-    };
-    int ans;
-    if (second == 1)
-        ans = bin(2, n, true);
-    else if (second == n)
-        ans = bin(1, n - 1, false);
-    else
-    {
-        cout << "? 1 " << second << endl;
-        int tmp; cin >> tmp;
-        int ll = 1, rr = n;
-        if (tmp == second) rr = second - 1;
-        else ll = second + 1;
-        ans = bin(ll, rr, tmp != second);
+        int n = scanner.nextInt();
+        x.clear(), y.clear();
+        for (int i = 1; i <= n; ++ i)
+            x.push_back(scanner.nextInt()),
+            y.push_back(scanner.nextInt());
+        println(median(x) * median(y));
     }
-    cout << "! " << ans << endl;
     return 0;
 }
