@@ -1,11 +1,8 @@
 /**
  *
- * 意识到 F[n] 只能被拆为 F[n-1] + F[n-2]
- * 因为是树，所以可能会有两个切割位置：
- * - 他们是等价的：F[n-1] + F[n-2] = F[n-2] + F[n-1]
- * - 因为再次拆分之后有：F[n-2] + F[n-3] + F[n-2]
- * - 如果是 Fib 树，怎么切都没事
- * 因此，随便选一个切就对了
+ * CF 编译器竟然没有 typeof
+ * 
+ * Trie 树这样写不是很行，，MLE 了
  */
 #include <bits/stdc++.h>
 
@@ -97,74 +94,62 @@ public:
     char nextChar() {char x; (*this)(x); return x;}
 } scanner;
 
-#define NO println("No"), exit(0)
-#define YES println("Yes"), exit(0)
-
-const int N = 2e5 + 5;
-bitset<N> fib;
-
-using dist_t = int;
-
-struct edge
+struct fast_read
 {
-    int u, v; dist_t w; int next;
-    edge() = default;
-    edge(int u, int v, dist_t w, int next)
-            : u(u), v(v), w(w), next(next) {}
-};
+    template <class name>
+    fast_read operator, (name &x)
+    {scanner(x); return fast_read{};}
+} fastRead;
 
-const int M = N * 2;
+#define $$ fastRead,
+#define int$(...) int __VA_ARGS__; $$ __VA_ARGS__
+#define i64$(...) longs __VA_ARGS__; $$ __VA_ARGS__
+#define lll$(...) lll __VA_ARGS__; $$ __VA_ARGS__
+#define countDown$(T) int$(T); while (T --)
 
-namespace FWS
+const int N = 5050;
+int a[N], cache[N], pos[N], tmp[N];
+
+namespace Trie
 {
-    int head[N];
-    int tot;
-    edge ee[M * 2];
+    using node = unordered_map<int, int>;
+    using string_t = const int *const;
+    const int N = ::N * ::N;
+    bitset<N> match;
+    vector<node> go;
+    int tot = 0;
 
-    void init(int n = N - 1)
+    void clear()
     {
-        memset(head, -1, sizeof(int) * (n + 1));
-        tot = 0;
+        go.clear(); go.emplace_back();
+        match.reset(); tot = 0;
     }
 
-    void addEdge(int u, int v, int w = 1)
+    void insert(const string_t &s, int n)
     {
-        ee[tot] = edge(u, v, w, head[u]);
-        head[u] = tot ++;
+        int u = 0;
+        for (int i = 0, id = s[i];
+             i < n; id = s[++ i])
+        {
+            if (go[u][id]) u = go[u][id];
+            else
+                u = go[u][id] = ++ tot,
+                go.emplace_back();
+            match[u] = true;
+        }
     }
 
-    template <class fun>
-    void forEach(int u, const fun process)
+    bool count(const string_t &s, int n)
     {
-        for (auto c = head[u];
-             c != -1;
-             c = ee[c].next)
-            process(ee[c]);
+        int u = 0;
+        for (int i = 0, id = s[i];
+             i < n; id = s[++ i])
+            if (!id) return true;
+            else if (go[u].count(id))
+                u = go[u][id];
+            else return false;
+        return true;
     }
-}
-
-const dist_t inf = 0x3f3f3f3f;
-
-int siz[N];
-
-void count(int u, int fa)
-{
-    siz[u] = 1;
-    FWS::forEach(u, [&](const edge &e)
-    {
-       if (e.w || e.v == fa) return;
-       count(e.v, u), siz[u] += siz[e.v];
-    });
-}
-
-auto cut_cut(int u, int fa, int x1, int x2)
-{
-    auto [pu, pv, kd] = make_tuple(0, 0, 0);
-    FWS::forEach(u, [&](const edge &e)
-    {
-
-    });
-    return make_tuple(pu, pv, kd);
 }
 
 signed main()
@@ -175,26 +160,36 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    vector<int> f;
-    f.push_back(1);
-    fib[1] = true;
-    int tmp = 1;
-    while (tmp + f.back() < N)
+    countDown$(T)
     {
-        auto x = tmp + f.back();
-        f.push_back(tmp), tmp = x;
-        fib[tmp] = true;
-    } f.push_back(tmp);
-    int n = scanner.nextInt();
-    FWS::init(n + 1);
-    for (int i = 1; i < n; ++ i)
-    {
-        int u = scanner.nextInt(),
-            v = scanner.nextInt();
-        FWS::addEdge(u, v, 0);
-        FWS::addEdge(v, u, 0);
+        int$(n, q);
+        for (int i = 1; i <= n; ++ i)
+            $$ a[i];
+        int top = 0; Trie::clear();
+        memset(pos, 0, sizeof(int) * (n + 1));
+        for (int i = 1; i <= n; ++ i)
+        {
+            if (!pos[a[i]])
+                pos[a[i]] = ++ top,
+                cache[top] = a[i];
+            else
+            {
+                for (int j = pos[a[i]]; j < top; ++ j)
+                    cache[j] = cache[j + 1], -- pos[cache[j]];
+                cache[top] = a[i], pos[a[i]] = top;
+            }
+            for (int j = 0; j < top; ++ j)
+                tmp[j] = cache[top - j];
+            Trie::insert(tmp, top);
+        }
+        while (q --)
+        {
+            int$(m);
+            for (int i = 0; i < m; ++ i)
+                $$ a[i];
+            bool res = Trie::count(a, m);
+            puts(res ? "Yes" : "No");
+        }
     }
-    if (!fib[n]) NO;
-
     return 0;
 }
