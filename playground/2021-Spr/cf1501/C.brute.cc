@@ -1,6 +1,11 @@
 /**
  *
+ * 不，我是傻逼（
  *
+ * 因为假设有四对不完全一致的 x + y = sum
+ * 那么，一定能产生一个答案
+ * 因此，对于 sum 的修改不会超过 4 次
+ * 所以暴力的事件复杂度不会超过 4 * max
  */
 #include <bits/stdc++.h>
 
@@ -93,65 +98,9 @@ public:
 } scanner;
 
 const int N = 2e5 + 5;
-
-template <class value>
-class chtholly
-{
-    struct node
-    {
-        unsigned l{}, r{};
-        mutable value v;
-
-        node() = default;
-        node(unsigned l, unsigned r, value v)
-                : l(l), r(r), v(v) {}
-        bool operator<(const node &rhs)
-        const {return l < rhs.l;}
-    };
-
-    set<node> tree;
-    unsigned n;
-
-    using iterator = typename set<node>::iterator;
-    using travel_t = function<void(iterator)>;
-
-    iterator split(unsigned index)
-    {
-        if (index >= n) return tree.end();
-        auto it = -- tree.upper_bound({index, 0, 0});
-        if (it->l == index) return it;
-        auto [l, r, v] = *it;
-        tree.erase(it);
-        tree.insert({l, index - 1, v});
-        return tree.insert({index, r, v}).first;
-    }
-
-public:
-    explicit chtholly(int siz, value init = 0) : n(siz)
-    {tree.insert({0, siz - 1u, init});}
-
-    void clear() {tree.clear(); tree.insert({0, n - 1u, 0});}
-
-    void resize(int siz) {n = siz; clear();}
-
-    value at(unsigned index)
-    {return (-- tree.upper_bound({index, 0, 0}))->v;}
-
-    void assign(unsigned l, unsigned r, value v)
-    {
-        auto rr = split(r + 1), ll = split(l);
-        tree.erase(ll, rr);
-        tree.insert({l, r, v});
-    }
-
-    void iterate(unsigned l, unsigned r, const travel_t &it)
-    {
-        auto rr = split(r + 1), ll = split(l);
-        for (; ll != rr; ++ ll) it(ll);
-    }
-};
-
-bitset<N> state;
+const int M = 5e6 + 5;
+pair<int, int> sav[M];
+int a[N], d[N];
 
 signed main()
 {
@@ -161,23 +110,24 @@ signed main()
 #if 0
     freopen("in.txt", "r", stdin);
 #endif
-    int T = scanner.nextInt();
-    chtholly t(N, 0);
-    while (T --)
-    {
-        int n = scanner.nextInt(), a;
-        t.clear(), state.reset();
-        for (int r = 1; r <= n; ++ r)
+    int n = scanner.nextInt();
+    for (int i = 1; i <= n; ++ i)
+        a[i] = scanner.nextInt();
+    for (int i = 1; i <= n; ++ i)
+        for (int j = i + 1; j <= n; ++ j)
         {
-            a = scanner.nextInt();
-            int l = max(r - a + 1, 0);
-            if (l > r) continue;
-            t.assign(l, r, 1);
+            auto ii = a[i], jj = a[j];
+            auto sum = ii + jj;
+            auto &[x, y] = sav[sum];
+            if (x && y && x != i && x != j &&
+                y != i && y != j)
+            {
+                println("YES");
+                print(x, ' ', y, ' ', i, ' ', j, '\n');
+                return 0;
+            }
+            else x = i, y = j;
         }
-        for (int i = 1; i <= n; ++ i)
-            if (t.at(i)) state.set(i);
-        for (int i = 1; i <= n; ++ i)
-            print(state[i] ? "1" : "0", " \n"[i == n]);
-    }
+    println("NO");
     return 0;
 }
