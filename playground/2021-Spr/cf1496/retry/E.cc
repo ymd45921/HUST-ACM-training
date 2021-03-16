@@ -104,6 +104,14 @@ struct fast_read
 const int N = 550;
 char g[N][N];
 
+void connect(int n, int m, bool ok)
+{
+    for (int i = 3 + ok; i <= m; i += 3)
+        for (int j = 1; j <= n; ++ j)
+            if (g[j][i] == 'X' || g[j][i - 1] == 'X')
+            { g[j][i] = g[j][i - 1] = 'X'; break; }
+}
+
 signed main()
 {
     ios::sync_with_stdio(false);
@@ -125,6 +133,7 @@ signed main()
                 for (int j = 1; j <= n; ++ j) g[j][i] = 'X';
         else for (int i = 2; i <= n; i += 3)
                 for (int j = 1; j <= n; ++ j) g[j][i] = 'X';
+        connect(n, m, m % 3 != 1);        
         for (int i = 1; i <= n; ++ i) println(g[i] + 1);
     }
     return 0;
