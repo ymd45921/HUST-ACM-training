@@ -1,5 +1,6 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "misc-no-recursion"
+#pragma GCC optimize(3, "Ofast", "inline")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -43,6 +44,7 @@ bitset<4> vis[N][N][N][N];
 constexpr auto monarch = 0, rebel = 1, traitor = 2;
 enum position { ZG = 0, FZ = 1, ZC = 2, NJ = 3 };
 constexpr int camps[] = {monarch, rebel, traitor};
+constexpr int from[] = {monarch, rebel, monarch, traitor};
 
 double *dfs(int zg, int zc, int fz, int nj, position now) {
     auto &state = f[zg][zc][fz][nj][now];
@@ -61,47 +63,26 @@ double *dfs(int zg, int zc, int fz, int nj, position now) {
         for (auto camp : camps) state[camp] = res[camp];
     } else {
         auto nxt = position((now + 1) % 4);
-        int scenario = 0;
-        double p[3] = {0.0, 0.0, 0.0};
-        const auto assign = [&](
-                double &high, double tmp,
-                const posibility res) {
-            scenario = 1, high = tmp;
-            for (auto camp : camps)
-                p[camp] = res[camp];
-        };
-        const auto append = [&](
-                double &high, double tmp,
-                const posibility res) {
-            ++ scenario;
-            for (auto camp : camps)
-                p[camp] += res[camp];
-        };
-        const auto apply = [&](
-                double &high, int camp,
-                position kill) {
-            int hp[] = {zg, fz, zc, nj};
-            if (hp[kill]) hp[kill] -= 1;
+        int scenario = 0, hp[] = {zg, fz, zc, nj};
+        double p[3] = {0.0, 0.0, 0.0}, high = -1.0;
+        const auto pos = from[now];
+        const auto test = [&]() {
             auto res = dfs(hp[0], hp[2], hp[1], hp[3], nxt);
-            double tmp = res[camp];
-            if (compareTo(tmp, high) > 0) assign(high, tmp, res);
-            else if (!compareTo(tmp, high)) append(high, tmp, res);
+            double tmp = res[pos];
+            if (compareTo(tmp, high) > 0) {
+                scenario = 1, high = tmp;
+                for (auto camp : camps)
+                    p[camp] = res[camp];
+            }
+            else if (!compareTo(tmp, high)) {
+                ++ scenario;
+                for (auto camp : camps)
+                    p[camp] += res[camp];
+            }
         };
-        if (now == ZG || now == ZC) {
-            double high = -1.0;
-            if (fz > 0) apply(high, monarch, FZ);
-            if (nj > 0) apply(high, monarch, NJ);
-        } else if (now == FZ) {
-            double high = -1.0;
-            if (zg > 0) apply(high, rebel, ZG);
-            if (zc > 0) apply(high, rebel, ZC);
-            if (nj > 0) apply(high, rebel, NJ);
-        } else if (now == NJ) {
-            double high = -1.0;
-            if (zg > 0) apply(high, traitor, ZG);
-            if (zc > 0) apply(high, traitor, ZC);
-            if (fz > 0) apply(high, traitor, FZ);
-        }
+        for (int i = 0; i < 4; ++ i)
+            if (hp[i] && from[i] != pos)
+                -- hp[i], test(), ++ hp[i];
         for (auto camp : camps)
             state[camp] = p[camp] / scenario;
     }
@@ -109,12 +90,11 @@ double *dfs(int zg, int zc, int fz, int nj, position now) {
 }
 
 signed main() {
-    cout << fixed << setprecision(6);
+    ios::sync_with_stdio(false), cout.tie(nullptr);
     for (int T = read(); T --;) {
         int zg = read(), zc = read(), fz = read(), nj = read();
-        auto answer = dfs(zg, zc, fz, nj, ZG);
-        for (auto camp : camps) cout << answer[camp] << ' ';
-        cout << endl;
+        auto ans = dfs(zg, zc, fz, nj, ZG);
+        printf("%.6lf %.6lf %.6lf\n", ans[0], ans[1], ans[2]);
     }
 }
 #pragma clang diagnostic pop
