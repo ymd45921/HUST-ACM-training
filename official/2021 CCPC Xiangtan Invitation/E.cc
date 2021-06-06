@@ -37,9 +37,11 @@ signed main() {
             continue;
         }
         llong ans = fastPow(2, n - 4) * (n - 3) % mod;
-        llong tmp = fastPow(2, n - 7) * (mod + 1 - fastPow(mod - 2, (n - 1) / 3 - 1)) % mod;
+        llong tmp = fastPow(2, n - 7) * (mod + 1 - fastPow(fastPow(mod - 8, mod - 2), (n - 1) / 3 - 1)) % mod * 24 % mod * fastPow(9, mod - 2) % mod;
         llong ano = fastPow(8, mod - 2) * fastPow(2, n - (n - 1) / 3 * 3 - 1) % mod * (n - (n - 1) / 3 * 3) % mod * fastPow(mod - 1, (n - 1) / 3 + 1) % mod;
-        cout << (ans + tmp + ano) % mod << endl;
+        cerr << "ans = " << ans << ", tmp = " << tmp << ", ano = " << ano << endl;
+        llong xx = (ans + tmp + ano) % mod * 8 % mod * fastPow(9, mod - 2) % mod;
+        cout << xx << endl;
     }
     return 0;
 }
